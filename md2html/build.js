@@ -7,6 +7,17 @@ const out = '/workspace/design/影视编导策划智能体-综合技术文档.ht
 
 const md = new MarkdownIt({ html: true, linkify: true, typographer: true });
 
+// 拦截 mermaid 代码块，渲染为 <pre class="mermaid-wrapper"><div class="mermaid">…</div></pre>
+const defaultFence = md.renderer.rules.fence.bind(md.renderer.rules);
+md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+  const token = tokens[idx];
+  const lang = (token.info || '').trim().split(/\s+/)[0];
+  if (lang === 'mermaid') {
+    return '<pre class="mermaid-wrapper"><div class="mermaid">' + md.utils.escapeHtml(token.content) + '</div></pre>';
+  }
+  return defaultFence(tokens, idx, options, env, self);
+};
+
 const text = fs.readFileSync(src, 'utf8');
 const body = md.render(text);
 
@@ -52,6 +63,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 .doc code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-size:13px;font-family:'JetBrains Mono','SF Mono',Consolas,monospace;color:var(--cyan)}
 .doc pre{background:#0b0f15;border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;margin:14px 0}
 .doc pre code{background:none;border:none;padding:0;color:#c9d1d9;font-size:13px;line-height:1.6}
+pre.mermaid-wrapper{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;overflow-x:auto;margin:14px 0;text-align:center}
+.mermaid{display:inline-block}
+.mermaid svg{max-width:100%;height:auto}
 .doc blockquote{border-left:3px solid var(--brand);background:var(--panel);margin:14px 0;padding:10px 16px;color:var(--muted);border-radius:0 8px 8px 0}
 .doc table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px}
 .doc th,.doc td{border:1px solid var(--line);padding:8px 12px;text-align:left}
@@ -91,6 +105,19 @@ heads.forEach(h=>{
 // scroll progress
 const pb=document.getElementById('pb');
 addEventListener('scroll',()=>{const d=document.documentElement;const max=(d.scrollHeight-d.clientHeight)||1;pb.style.width=(d.scrollTop/max*100)+'%';});
+</script>
+<script src="vendor/mermaid.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  if (!window.mermaid) { return; }
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose',
+    themeVariables:{ primaryColor:'#1d242f', primaryTextColor:'#e6edf3', primaryBorderColor:'#8b5cf6',
+      lineColor:'#4a5b74', clusterBkg:'#161b23', clusterBorder:'#2a3340', edgeLabelBackground:'#161b23' } });
+  document.querySelectorAll('.mermaid').forEach(function(el){
+    try { mermaid.run({ nodes:[el] }); }
+    catch(e){ el.innerHTML='<p style="color:#f87171">⚠️ Mermaid 渲染失败: '+String(e&&e.message||e)+'</p>'; }
+  });
+});
 </script>
 </body>
 </html>`;

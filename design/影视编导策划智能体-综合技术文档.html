@@ -40,6 +40,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line
 .doc code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-size:13px;font-family:'JetBrains Mono','SF Mono',Consolas,monospace;color:var(--cyan)}
 .doc pre{background:#0b0f15;border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;margin:14px 0}
 .doc pre code{background:none;border:none;padding:0;color:#c9d1d9;font-size:13px;line-height:1.6}
+pre.mermaid-wrapper{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;overflow-x:auto;margin:14px 0;text-align:center}
+.mermaid{display:inline-block}
+.mermaid svg{max-width:100%;height:auto}
 .doc blockquote{border-left:3px solid var(--brand);background:var(--panel);margin:14px 0;padding:10px 16px;color:var(--muted);border-radius:0 8px 8px 0}
 .doc table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px}
 .doc th,.doc td{border:1px solid var(--line);padding:8px 12px;text-align:left}
@@ -423,7 +426,7 @@ a{color:var(--brand2)}
 <li><strong>Skill 规格(SkillSpec)</strong>：可对外复用的封装单元。</li>
 </ul>
 <h3>7.2 ER 关系示意</h3>
-<pre><code class="language-mermaid">erDiagram
+<pre class="mermaid-wrapper"><div class="mermaid">erDiagram
   PROJECT ||--|{ SESSION : has
   SESSION ||--|{ WORKFLOW_NODE : logs
   SESSION ||--|{ SCRIPT : produces
@@ -436,8 +439,7 @@ a{color:var(--brand2)}
   WORKFLOW_NODE }o--o| KNOWLEDGE_CARD : distilled_into
   KNOWLEDGE_CARD }o--o{ SKILL_SPEC : compiled_into
   SKILL_SPEC ||--o| SESSION : reusable_in
-</code></pre>
-<h3>7.3 关键实体 Schema（示例）</h3>
+</div></pre><h3>7.3 关键实体 Schema（示例）</h3>
 <p><strong>剧本片段（Script）</strong></p>
 <pre><code class="language-jsonc">{
   &quot;script_id&quot;: &quot;sc_001&quot;,
@@ -471,13 +473,12 @@ a{color:var(--brand2)}
 <p><strong>知识卡片（KnowledgeCard）</strong>——详见第 12 章。
 <strong>WorkflowNode / SkillSpec</strong>——见第 12 章。</p>
 <h3>7.4 关系图（交互原型与工程图的关系）</h3>
-<pre><code class="language-mermaid">graph LR
-  A[布局工程图] --&gt; B[复盘沉淀工程图]
-  B --&gt; C[复盘沉淀交互原型]
-  C --&gt; D[分镜编排交互原型&lt;br&gt;(规划中)]
-  D --&gt; E[高保真UI与实现]
-</code></pre>
-<hr>
+<pre class="mermaid-wrapper"><div class="mermaid">flowchart LR
+  A[&quot;布局工程图&quot;] --&gt; B[&quot;复盘沉淀工程图&quot;]
+  B --&gt; C[&quot;复盘沉淀交互原型&quot;]
+  C --&gt; D[&quot;分镜编排交互原型&quot;]
+  D --&gt; E[&quot;高保真UI与实现&quot;]
+</div></pre><hr>
 <h2>8. 多 Agent 工作流编排</h2>
 <h3>8.1 Agent 清单（Actor / Critic 架构）</h3>
 <table>
@@ -543,7 +544,7 @@ a{color:var(--brand2)}
 </tbody>
 </table>
 <h3>8.2 主链路编排（简化序列）</h3>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid-wrapper"><div class="mermaid">sequenceDiagram
   participant U as 用户
   participant B as 主控Draft
   participant S as 剧本Agent
@@ -563,8 +564,7 @@ a{color:var(--brand2)}
   B-&gt;&gt;C: 多版择优+修订
   C--&gt;&gt;B: 修订建议
   B--&gt;&gt;U: 回传基准图后再编排闭环
-</code></pre>
-<h3>8.3 关键一致性策略（防&quot;角色精分&quot;）</h3>
+</div></pre><h3>8.3 关键一致性策略（防&quot;角色精分&quot;）</h3>
 <ol>
 <li><strong>资产库先行</strong>：先建角色/场景/道具三类资产卡，所有分镜基于资产卡生成（ArcReel/Story Claw 验证范式）。</li>
 <li><strong>参考图条件控制</strong>：IP-Adapter（外观）、ControlNet（姿态/深度/构图）、StoryMaker（服装/发型/体型整体一致）、LoRA（风格/角色）。</li>
@@ -1023,6 +1023,19 @@ heads.forEach(h=>{
 // scroll progress
 const pb=document.getElementById('pb');
 addEventListener('scroll',()=>{const d=document.documentElement;const max=(d.scrollHeight-d.clientHeight)||1;pb.style.width=(d.scrollTop/max*100)+'%';});
+</script>
+<script src="vendor/mermaid.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  if (!window.mermaid) { return; }
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose',
+    themeVariables:{ primaryColor:'#1d242f', primaryTextColor:'#e6edf3', primaryBorderColor:'#8b5cf6',
+      lineColor:'#4a5b74', clusterBkg:'#161b23', clusterBorder:'#2a3340', edgeLabelBackground:'#161b23' } });
+  document.querySelectorAll('.mermaid').forEach(function(el){
+    try { mermaid.run({ nodes:[el] }); }
+    catch(e){ el.innerHTML='<p style="color:#f87171">⚠️ Mermaid 渲染失败: '+String(e&&e.message||e)+'</p>'; }
+  });
+});
 </script>
 </body>
 </html>
