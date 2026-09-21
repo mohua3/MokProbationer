@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>影视编导桌面智能体 · 布局工程图（左中右三位一体）</title>
+<style>
+  :root{
+    --bg:#F4F3F0; --paper:#FFFFFF; --ink:#1C1B2E; --ink-2:#6B6888; --line:#C9C6BD;
+    --line-strong:#A6A3B8; --brand:#3C2ECA; --brand-2:#241F93; --accent:#C77B2E;
+    --ok:#2F9E6E; --grid:rgba(28,27,46,.06); --mono:"SFMono-Regular","Roboto Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);padding:28px;line-height:1.5}
+  h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+  .sub{color:var(--ink-2);font-size:12.5px;margin-top:4px}
+  .sheet{max-width:1280px;margin:0 auto}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 22px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0 18px;font-size:12px}
+  .legend b{color:var(--brand-2)}
+  .tag{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--line-strong)}
+  .tagline{font-family:var(--mono);color:var(--ink-2);font-size:11.5px}
+  .grid{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;border-radius:12px;padding:0;position:relative}
+  .app{border:1.5px solid var(--ink);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;background:var(--paper);box-shadow:0 18px 40px rgba(28,27,46,.10)}
+  /* bricks:generic designer area */
+  .brick{border:1px solid var(--line);background:#FBFBF9}
+  .box{border:1.5px solid var(--line-strong);position:relative;background:#FDFDFC}
+  .dim{position:absolute;font-family:var(--mono);font-size:10.5px;color:var(--ink-2);background:rgba(255,255,255,.85);border:1px dashed var(--line-strong);padding:0 4px;border-radius:3px;white-space:nowrap;line-height:1.6;z-index:3}
+  /* top bar */
+  .topbar{display:flex;align-items:center;gap:14px;padding:0 16px;height:58px;border-bottom:1.5px solid var(--ink);background:#16151F;color:#fff}
+  .topbar .unit{margin:0 auto 0 14px}
+  .tb{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:6px;color:#E8E6F5;padding:5px 12px;font-size:12px}
+  .mm-brand{font-weight:700;letter-spacing:.4px;font-size:13px}
+  /* body grid */
+  .cols{display:grid;grid-template-columns:250px 1fr 392px;grid-template-rows:1fr;height:640px;position:relative}
+  .col{border-right:1.5px solid var(--ink)}
+  .col:last-child{border-right:none}
+  .section-title{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--ink-2);padding:10px 12px 6px;text-transform:uppercase}
+  .pill{display:flex;align-items:center;justify-content:center;gap:6px;height:32px;border:1px solid var(--line);border-radius:6px;font-size:12px;color:var(--ink-2)}
+  .row{display:flex;flex-direction:column;gap:6px}
+  .nav-item{display:flex;align-items:center;gap:9px;height:34px;padding:0 11px;border-radius:6px;font-size:12.5px;color:var(--ink-2)}
+  .nav-item.on{background:#EDEBFF;color:var(--brand-2);font-weight:600}
+  .ico{width:14px;height:14px;border:1.4px solid currentColor;border-radius:4px;position:relative;flex:none}
+  .ico.g{width:16px;height:16px}
+  .ico.g::before{content:"";position:absolute;inset:3px;border:1.4px solid currentColor;border-radius:6px}
+  .ico.g::after{content:"";position:absolute;left:4px;top:-2px;width:6px;height:8px;background:inherit;border:1.2px solid currentColor;border-radius:3px}
+  /* center chat */
+  .center{display:flex;flex-direction:column;position:relative}
+  .chat-head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .chat-head .t{font-weight:600;font-size:13px}
+  .chat-head .m{margin-left:auto}
+  .msgs{flex:1;padding:16px 16px 10px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+  .bub{max-width:82%;padding:10px 13px;border-radius:12px;font-size:12.5px}
+  .bub.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+  .bub.ai{align-self:flex-start;background:#EDEBFF;color:var(--ink);border-bottom-left-radius:4px}
+  .meta{font-size:10px;color:var(--ink-2);margin-top:4px}
+  .cells{display:flex;gap:8px;align-self:flex-start;margin-top:2px;flex-wrap:wrap}
+  .scell{width:118px;height:58px;border:1px solid var(--line-strong);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-2);background:var(--paper);position:relative}
+  .scell.spec{outline:1px dashed var(--accent);outline-offset:-2px;color:var(--accent)}
+  .inputbar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--line);position:relative}
+  .inp{flex:1;border:1.5px dashed var(--line-strong);border-radius:8px;height:44px;display:flex;align-items:center;gap:9px;padding:0 12px;color:var(--ink-2);font-size:12.5px;background:#FBFAF7}
+  .chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--ink-2)}
+  .bt{height:34px;min-width:66px;border:none;border-radius:7px;font-weight:600;font-size:12.5px;color:#fff;background:var(--brand);display:inline-flex;align-items:center;justify-content:center}
+  /* right workspace */
+  .work{display:flex;flex-direction:column;position:relative;background:#FBFBF9}
+  .ws-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .ws-head .t{font-weight:600;font-size:13px}
+  .canvas{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px}
+  .frame{flex:1;border:1.5px solid var(--line-strong);border-radius:8px;background:
+     repeating-linear-gradient(-45deg,transparent 0 12px,rgba(28,27,46,.045) 12px 13px), var(--paper);
+     display:flex;align-items:center;justify-content:center;color:var(--ink-2);font-size:12px;position:relative}
+  .vis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .vbox{border:1px solid var(--line);border-radius:8px;height:74px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-2);background:#FDFDFC}
+  .hint{display:flex;gap:6px}
+  /* dock bottom */
+  .dock{display:flex;align-items:center;gap:4px;padding:9px 10px;border-top:1.5px solid var(--ink);background:#ECE9FF}
+  .dock-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border-radius:8px;font-size:10.5px;color:var(--ink-2);border:1px solid transparent}
+  .dock-item.on{background:#fff;color:var(--brand-2);border-color:var(--line-strong);font-weight:600;box-shadow:0 2px 6px rgba(28,27,46,.10)}
+  .dico{width:15px;height:15px;border:1.5px solid currentColor;border-radius:4px;position:relative}
+  /* dimension callouts overlaying the app */
+  .dimc{position:absolute;font-family:var(--mono);font-size:10px;color:var(--accent);background:#fff;outline:1px dashed rgba(199,123,46,.6);padding:0 4px;border-radius:3px;z-index:4;white-space:nowrap}
+  /* register / table */
+  .reg{width:100%;border-collapse:collapse;margin-top:22px;font-size:12px;background:var(--paper);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .reg th{background:#EDEBFF;color:var(--brand-2);text-align:left;padding:10px 14px;font-weight:700;border-bottom:1px solid var(--line)}
+  .reg td{padding:9px 14px;border-bottom:1px solid var(--grid);vertical-align:top}
+  .reg tr:last-child td{border-bottom:none}
+  .reg td.id{font-family:var(--mono);color:var(--accent);font-weight:700;width:56px}
+  .reg td.w{font-family:var(--mono);color:var(--ink-2);white-space:nowrap;width:96px}
+  .note{font-size:11.5px;color:var(--ink-2);margin-top:10px}
+  .note code{font-family:var(--mono);font-size:11px;color:var(--brand-2);background:#EDEBFF;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <h1>影视编导桌面智能体 · 布局工程图（左中右三位一体）</h1>
+  <div class="sub">线框稿 · 标注图 · 用于 UI 开发与评审 | 版本 v0.1 · 2026-09-21</div>
+
+  <div class="legend">
+    <span class="tag"><span class="sw" style="background:#EDEBFF;border-color:var(--brand)"></span><b>功能导航 / 选中态</b></span>
+    <span class="tag"><span class="sw" style="background:var(--brand)"></span><b>主行动（对话发送）</b></span>
+    <span class="tag"><span class="sw" style="border-color:var(--accent)"></span><b>虚线交互区（拖拽上传）</b></span>
+    <span class="tag"><span class="sw" style="background:repeating-linear-gradient(45deg,#fff,#fff 4px,#eee 4px,#eee 6px)"></span><b>可视化画布占位</b></span>
+    <span class="tagline">单位：px | 线框仅示结构，非最终视觉</span>
+  </div>
+
+  <div class="grid">
+  <div class="app" style="position:relative">
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="topbar">
+      <div class="mm-brand">🎬 影视编导 <span style="opacity:.55;font-weight:400">DIRECTOR&nbsp;AGENT</span></div>
+      <span class="pill-unit" style="margin:0 auto"></span>
+      <span class="tb" style="margin:0 auto">当前项目：<b>《长夜·星火》</b> 第 3 集 ▾</span>
+      <span class="tb">模型 <b>通义·Qwen</b> ▾</span>
+      <span class="tb">账户 ▾</span>
+    </div>
+    <span class="dim" style="top:-24px;left:18px;border-color:#fff">顶栏 H=58 · 品牌 + 项目切换 + 模型供应商 + 账户</span>
+
+    <!-- ===== THREE COLUMNS ===== -->
+    <div class="cols">
+
+      <!-- LEFT -->
+      <div class="col" style="position:relative;display:flex;flex-direction:column">
+        <span class="dim" style="top:-14px;left:-12px">左栏 W=250</span>
+        <div style="padding:12px">
+          <div class="bt" style="width:100%;background:var(--brand-scale,#3C2ECA)">＋ 新建项目 / 会话</div>
+          <div class="section-title">功能导航 · WORKFLOW</div>
+          <div class="row">
+            <div class="nav-item on"><span class="ico"></span>剧本改编</div>
+            <div class="nav-item"><span class="ico"></span>分镜脚本</div>
+            <div class="nav-item"><span class="ico"></span>提示词推导</div>
+            <div class="nav-item"><span class="ico g"></span>分镜编排 · 工作台</div>
+            <div class="nav-item"><span class="ico"></span>配音 · 音效</div>
+            <div class="nav-item"><span class="ico"></span>评审 · 迭代</div>
+          </div>
+        </div>
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--line);padding:10px 12px">
+          <div class="section-title">会话集合 · SESSIONS</div>
+          <div class="pill" style="margin-bottom:8px">🔍 搜索会话</div>
+          <div class="row" style="gap:5px;overflow:hidden">
+            <div class="nav-item on" style="background:#EDEBFF;color:var(--brand-2)">◈ 第3集 镜头1-12</div>
+            <div class="nav-item">◈ 角色·沈亦 卡</div>
+            <div class="nav-item">◈ 场景·旧站台</div>
+            <div class="nav-item">◈ 配音 第2段</div>
+            <div class="nav-item">◈ 评审记录 0718</div>
+          </div>
+          <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--line)">
+            <div class="nav-item">⚙ 设置 · 供应商 · 训练</div>
+          </div>
+        </div>
+        <span class="dimc" style="bottom:10px;right:8px">L / 功能导航 + 会话集合</span>
+      </div>
+
+      <!-- CENTER -->
+      <div class="col center" style="position:relative">
+        <span class="dim" style="top:-14px;left:45%">中栏 · 弹性（对话窗口）</span>
+        <div class="chat-head">
+          <span class="t">第 3 集 · 分镜对话</span>
+          <span class="chip">分镜脚本 阶段</span>
+          <span class="chip">RAG 已载入</span>
+          <span class="m tb" style="color:#fff;background:#16151F">更多 ▾</span>
+        </div>
+        <div class="msgs">
+          <div class="bub ai">请基于剧本第 3 场生成分镜脚本（叙事段：发现信物 + 旧台别离）。<div class="meta">导演 · 09:12</div></div>
+          <div class="cells">
+            <div class="scell">镜头1 · 全景</div>
+            <div class="scell spec">镜头2 · 过肩</div>
+            <div class="scell">镜头3 · 特写</div>
+          </div>
+          <div class="bub user">把镜头2 改成正反打，并给出构图与运镜提示词。<div class="meta">我 · 09:13</div></div>
+          <div class="bub ai" style="border:1.5px dashed var(--accent)">已将改写结果写入→右栏工作台「分镜编排」，正在更新基准图一致性校验……<div class="meta">导演 · 09:13</div></div>
+        </div>
+        <div class="inputbar">
+          <span class="ico" style="border-radius:50%;width:20px;height:20px"></span>
+          <div class="inp">输入指令，或拖拽文件 / 图片到此处</div>
+          <div class="bt">发送</div>
+        </div>
+        <div class="dimc" style="top:-14px;left:14px">M-1 拖拽文件/图片上传区</div>
+        <div class="dimc" style="bottom:12px;left:14px">M-2 输入框 + 剪贴板/附件</div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="col work" style="position:relative">
+        <span class="dim" style="top:-14px;right:0">右栏 W=392 · 影视工作台</span>
+        <div class="ws-head">
+          <span class="t">影视工作台 <span style="color:var(--ink-2);font-weight:400">/ 分镜编排</span></span>
+          <span class="chip">🔒 资产锁定</span>
+        </div>
+        <div class="canvas">
+          <div class="frame">可视化工作流 / 分镜画布（此处为占位）</div>
+          <div class="vis">
+            <div class="vbox">角色·沈亦 card</div>
+            <div class="vbox">场景·旧站台 card</div>
+            <div class="vbox spec" style="outline:1px dashed var(--accent);color:var(--accent)">基准图 · 镜头2</div>
+            <div class="vbox">提示词 · 运镜</div>
+          </div>
+        </div>
+        <!-- dock = bottom workflow nav -->
+        <div class="dock">
+          <div class="dock-item"><span class="dico" style="border-radius:50%;width:14px;height:14px"></span>资产</div>
+          <div class="dock-item on"><span class="dico"></span>镜头</div>
+          <div class="dock-item"><span class="dico" style="border-radius:50%;width:14px;height:14px;border-style:dashed"></span>编排</div>
+          <div class="dock-item"><span class="dico" style="border:1.4px dashed currentColor"></span>评审</div>
+          <div class="dock-item"><span class="dico" style="border-radius:4px"></span>配音</div>
+        </div>
+        <div class="dimc" style="bottom:6px;right:10px;outline:none;background:transparent">R-Dock 底部工具流分类导航</div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <!-- ==== REGISTER TABLE ==== -->
+  <table class="reg">
+    <tr>
+      <th>编号</th><th>区域</th><th>尺寸 / 布局</th><th>功能与交互说明</th>
+    </tr>
+    <tr><td class="id">A-01</td><td>顶栏 Top Bar</td><td class="w">H 58 · 全宽</td>
+      <td>品牌标识、当前项目切换、模型供应商下拉、账户/设置。常驻全局。</td></tr>
+    <tr><td class="id">L-01</td><td>左栏·功能导航</td><td class="w">W 250（可折叠至 0/48）</td>
+      <td>纵向七步工作流：剧本改编→分镜→提示词→编排→配音→评审。当前步骤高亮，点击切换中栏会话上下文。</td></tr>
+    <tr><td class="id">L-02</td><td>左栏·会话集合</td><td class="w">弹性填充</td>
+      <td>会话列表（按项目/角色/场景组织），支持搜索、置顶、归档。与右栏工作台联动。</td></tr>
+    <tr><td class="id">M-01</td><td>中栏·对话窗口</td><td class="w">弹性（min 420）</td>
+      <td>多轮对话、工具结果流式回填。头部展示阶段标签与 RAG 状态。</td></tr>
+    <tr><td class="id">M-02</td><td>中栏·输入/上传</td><td class="w">底部输入条</td>
+      <td>支持拖拽文件、图片、文本入会话；虚线框提示上传命中；转调用右栏工具。</td></tr>
+    <tr><td class="id">R-01</td><td>右栏·影视工作台</td><td class="w">W 392（可拖拽调宽 300–520）</td>
+      <td>工作流工具调用 + 可视化：分镜画布、资产卡、基准图、提示词卡。随底部导航切换。</td></tr>
+    <tr><td class="id">R-02</td><td>右栏·底部工具流导航(Dock)</td><td class="w">H 56 · 横排分类</td>
+      <td>分类：资产 / 镜头 / 编排 / 评审 / 配音。切换后上方工作台切换到对应工具集，形成可视化工作流操作区。</td></tr>
+  </table>
+
+  <div class="note">
+    <b>交互要点：</b>①中栏输入框支持「拖拽文件/图片 → 虚线高亮 → 作为上下文或基准图进入会话」。②右栏 Dock 即"底部导航栏"，对工具流进行分类切换，选中项高亮并驱动工作台内容。③左-中-右联动：左栏选会话/步骤 → 中栏加载对话 → 右栏展示对应工作台。响应式中栏可隐藏，左右保留。
+  </div>
+</div>
+</body>
+</html>
