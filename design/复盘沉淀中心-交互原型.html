@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>复盘沉淀中心 · 交互原型</title>
+<style>
+  :root{
+    --bg:#0F0E13; --bg-2:#16151D; --panel:#1B1A24; --panel-2:#211F2C; --panel-3:#282636;
+    --line:#2E2B3D; --line-soft:#262338;
+    --text:#EFEEF6; --text-2:#A6A3BC; --text-3:#7B7894;
+    --film:#E8A13D; --film-soft:#3A2B16; --film-line:#8a6426;     /* film amber */
+    --brand:#6C5CE7; --brand-2:#8E84F5; --brand-soft:#242040;     /* coupling purple */
+    --ok:#43B581; --ok-soft:#123528; --warn:#E8614C; --warn-soft:#3a1a16;
+    --gold-line:linear-gradient(90deg,#6C5CE7,#8E84F5 45%,#E8A13D);
+    --r:10px; --r-sm:8px;
+    --mono:"SFMono-Regular","JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:
+    radial-gradient(1200px 600px at 75% -10%, #1d1a2e 0%, transparent 55%),
+    radial-gradient(900px 500px at 0% 100%, #17131f 0%, transparent 50%),
+    var(--bg); color:var(--text); min-height:100%; padding:0; overflow:hidden}
+  .world{display:flex;flex-direction:column;height:100vh;position:relative}
+
+  /* ---------- topbar ---------- */
+  .topbar{display:flex;align-items:center;gap:14px;padding:0 20px;height:58px;border-bottom:1px solid var(--line);background:rgba(22,21,29,.6);backdrop-filter:blur(8px);flex:none;z-index:5}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;letter-spacing:.3px}
+  .brand .glyph{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),#9b52e0 60%,var(--film) 125%);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 4px 14px rgba(108,92,231,.4)}
+  .brand small{display:block;font-size:10px;color:var(--text-3);font-weight:500;letter-spacing:1.5px}
+  .tabs{display:flex;gap:2px;padding:3px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);margin-left:8px}
+  .tab{padding:7px 14px;font-size:13px;color:var(--text-2);border-radius:6px;cursor:pointer;transition:.18s;border:none;background:transparent;font-family:inherit}
+  .tab:hover{color:var(--text)}
+  .tab.on{background:var(--panel-3);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-soft)}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .pill{font-size:12px;color:var(--text-3);border:1px solid var(--line);border-radius:20px;padding:6px 12px;display:flex;gap:6px;align-items:center}
+  .pill b{color:var(--text-2);font-weight:600}
+  .btn{cursor:pointer;border:.5px solid var(--line);border-radius:var(--r-sm);background:var(--panel-3);color:var(--text);font-size:13px;padding:8px 14px;display:inline-flex;align-items:center;gap:7px;transition:.15s;font-family:inherit}
+  .btn:hover{border-color:var(--brand-2);color:#fff}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),#7a4fe0);border:none;color:#fff;font-weight:600;box-shadow:0 6px 16px rgba(108,92,231,.35)}
+  .btn.primary:hover{filter:brightness(1.1)}
+  .btn.ok{background:var(--ok-soft);border-color:#1f5c44;color:var(--ok)}
+
+  /* ---------- steps ---------- */
+  .steps{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line);padding:18px 20px 16px;gap:0;position:relative;flex:none;background:linear-gradient(180deg,var(--bg-2),transparent)}
+  .step{position:relative;padding-left:40px}
+  .step .num{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:8px;background:var(--panel-3);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--text-3);transition:.2s}
+  .step .st{font-size:14px;font-weight:600}
+  .step .sd{font-size:11.5px;color:var(--text-3);margin-top:3px;max-width:300px;line-height:1.5}
+  .step.done{opacity:1}
+  .step.done .num{background:linear-gradient(135deg,var(--brand),var(--brand-2));border:none;color:#fff}
+  .step.active .num{background:var(--film-soft);border-color:var(--film-line);color:var(--film);box-shadow:0 0 0 3px rgba(232,161,61,.15)}
+  .step.active .st{color:var(--film)}
+  .step:not(:first-child)::before{content:"";position:absolute;left:-1px;top:14px;width:12px;height:1px;background:var(--line)}
+
+  /* ---------- body ---------- */
+  .body{flex:1;display:grid;grid-template-columns:344px 1fr;min-height:0;overflow:hidden}
+  .aside{border-right:1px solid var(--line);overflow-y:auto;padding:14px;background:rgba(22,21,29,.4)}
+  .aside::-webkit-scrollbar{width:8px}
+  .aside::-webkit-scrollbar-thumb{background:var(--line-soft);border-radius:8px}
+  .sec-tag{font-size:10px;font-weight:700;letter-spacing:1.6px;color:var(--text-3);padding:0 2px 10px}
+  .kitem{display:flex;flex-direction:column;gap:6px;padding:13px 13px;border-radius:var(--r);border:1px solid transparent;cursor:pointer;transition:.15s;margin-bottom:8px;background:var(--panel)}
+  .kitem:hover{border-color:var(--line);background:var(--panel-2)}
+  .kitem.on{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 4px 14px rgba(108,92,231,.18)}
+  .krow{display:flex;align-items:center;gap:8px}
+  .kicon{width:26px;height:26px;border-radius:7px;background:var(--panel-3);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+  .kitem.on .kicon{background:var(--brand)}
+  .kname{font-weight:600;font-size:13.5px;flex:1}
+  .badge{font-size:10px;border-radius:20px;padding:2px 8px;font-weight:600;flex:none}
+  .badge.saved{background:var(--ok-soft);color:var(--ok)}
+  .badge.pkg{background:#342a5c;color:var(--brand-2)}
+  .badge.rev{background:var(--warn-soft);color:var(--warn)}
+  .badge.muted{background:var(--panel-3);color:var(--text-3)}
+  .kmeta{font-size:11.5px;color:var(--text-3);padding-left:34px}
+
+  .main{overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  .main::-webkit-scrollbar{width:8px}
+  .main::-webkit-scrollbar-thumb{background:var(--line-soft);border-radius:8px}
+  .cardhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .cardhead h2{font-size:20px;font-weight:700}
+  .chips{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+  .chip{font-size:11.5px;color:var(--text-2);border:1px solid var(--line);border-radius:20px;padding:4px 11px;background:var(--panel)}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .kvbox{padding:12px 13px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--panel)}
+  .kvbox .lb{font-size:10px;color:var(--text-3);letter-spacing:.5px;margin-bottom:4px}
+  .kvbox .vl{font-size:13px;font-weight:600}
+  .block{border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;background:var(--panel)}
+  .bt-title{font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--text-3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .bt-title::before{content:"";width:3px;height:12px;border-radius:2px;background:var(--gold-line)}
+  .opstep{display:flex;gap:12px;align-items:flex-start;padding:7px 0}
+  .opstep+.opstep{border-top:1px solid var(--line-soft)}
+  .opno{width:24px;height:24px;border-radius:50%;background:var(--panel-3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--brand-2);flex:none;margin-top:1px}
+  .opdesc{flex:1}
+  .opdesc .od{font-size:13px;line-height:1.5}
+  .opdesc .ot{font-size:11px;color:var(--text-3);margin-top:2px;font-family:var(--mono)}
+  .prm{font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--text-2);background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 13px;display:flex;gap:10px;align-items:flex-start}
+  .prm .copypin{margin-left:auto;font-family:var(--font-sans);font-size:11px;color:var(--text-3);cursor:pointer;flex:none}
+  .prm .copypin:hover{color:var(--brand-2)}
+  .ptags{display:flex;gap:8px;flex-wrap:wrap}
+  .ptag{display:inline-flex;gap:7px;align-items:center;font-size:12px;color:var(--text-2);background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:5px 12px}
+  .ptag b{color:var(--film)}
+  .alertbox{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--film-line);background:var(--film-soft);border-radius:var(--r);padding:12px 14px;font-size:12.5px;color:#eec68a;line-height:1.5}
+  .alertbox .aico{flex:none}
+
+  /* packaging panel */
+  .packpanel{border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg,var(--panel),var(--bg-2));overflow:hidden}
+  .packhead{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .packhead .t{font-size:13px;font-weight:700}
+  .packgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 16px}
+  .pkg{display:flex;flex-direction:column;gap:5px;border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;background:var(--panel-2);transition:.15s}
+  .pkg .pk{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px}
+  .pkg .ps{font-size:10.5px;color:var(--text-3)}
+  .pkg.ok{border-color:#1f5c44;background:var(--ok-soft)}
+  .pkg.ok .pk{color:var(--ok)}
+  .pkg.warn{border-color:var(--warn);background:var(--warn-soft)}
+  .pkg.warn .pk{color:var(--warn)}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .dot.g{background:var(--ok)} .dot.r{background:var(--warn)} .dot.a{background:var(--film)} .dot.b{background:var(--brand-2)}
+
+  .footer{flex:none;border-top:1px solid var(--line);padding:13px 20px;display:flex;align-items:center;gap:10px;background:rgba(22,21,29,.5)}
+  .footer .note{font-size:11.5px;color:var(--text-3);line-height:1.5}
+
+  /* toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-3);border:1px solid var(--line);color:var(--text);padding:11px 18px;border-radius:var(--r);font-size:13px;display:flex;gap:9px;align-items:center;opacity:0;pointer-events:none;transition:.28s;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast .t-ok{color:var(--ok);font-weight:700}
+  .toast .t-br{color:var(--brand-2);font-weight:700}
+  .toast .t-fm{color:var(--film)}
+
+  /* skill modal */
+  .overlay{position:fixed;inset:0;background:rgba(10,9,15,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:40;opacity:0;transition:.2s}
+  .overlay.open{display:flex;opacity:1}
+  .modal{width:560px;max-width:92vw;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transform:translateY(12px);transition:.25s}
+  .overlay.open .modal{transform:none}
+  .modal-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .modal-head h3{font-size:16px}
+  .close{cursor:pointer;color:var(--text-3);font-size:18px;line-height:1;background:none;border:none;font-family:inherit}
+  .modal-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+  .field label{display:block;font-size:11px;color:var(--text-3);margin-bottom:6px;letter-spacing:.4px}
+  .field input,.field textarea{width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--text);font-size:13px;padding:9px 12px;font-family:inherit;outline:none}
+  .field input:focus,.field textarea:focus{border-color:var(--brand)}
+  .field textarea{resize:vertical;min-height:92px;line-height:1.5}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end}
+  .kvtstep{font-family:var(--mono);font-size:12px;color:var(--text-2);background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+  .kvtstep b{color:var(--text)}
+  .kvtstep li{margin-left:18px}
+</style>
+</head>
+<body>
+<div class="world">
+  <!-- topbar -->
+  <div class="topbar">
+    <div class="brand"><span class="glyph">♻</span><div>复盘沉淀中心<small>REFLECT · CAPTURE · REUSE</small></div></div>
+    <div class="tabs">
+      <div class="tab on">对话记录导入</div>
+      <div class="tab">技能点知识库</div>
+      <div class="tab">Skill 资产库</div>
+    </div>
+    <div class="top-right">
+      <span class="pill">本周归档 <b id="archCount">12</b></span>
+      <span class="pill">已沉淀 <b id="savedCount" style="color:var(--ok)">4</b></span>
+      <span class="pill">已封装 <b id="pkgCount" style="color:var(--brand-2)">2</b></span>
+      <button class="btn primary" id="btnNew">＋ 新建复盘</button>
+    </div>
+  </div>
+
+  <!-- 3-step -->
+  <div class="steps">
+    <div class="step done">
+      <div class="num">1</div>
+      <div class="st">一键总结对话</div>
+      <div class="sd">拉取选定会话，自动归纳操作流程 · 工具调用链 · 产物清单。</div>
+    </div>
+    <div class="step done">
+      <div class="num">2</div>
+      <div class="st">提炼技能点卡</div>
+      <div class="sd">按技能点拆分为多张结构化知识卡片，可人工编辑。</div>
+    </div>
+    <div class="step active">
+      <div class="num">3</div>
+      <div class="st">沉淀 &amp; 封装 Skill</div>
+      <div class="sd">写入工作流知识库；选定卡片一键封装为 Skill 格式。</div>
+    </div>
+  </div>
+
+  <!-- body -->
+  <div class="body">
+    <!-- aside -->
+    <div class="aside">
+      <div class="sec-tag">技能点知识卡片 · 来源会话</div>
+      <div class="kitem on" data-id="0">
+        <div class="krow"><span class="kicon">🎬</span><span class="kname">分镜脚本优化</span><span class="badge pkg">已封装</span></div>
+        <div class="kmeta">流程 6 步 · 产物 3 · 回归通过 3/3</div>
+      </div>
+      <div class="kitem" data-id="1">
+        <div class="krow"><span class="kicon">🎥</span><span class="kname">运镜 · 越轴修正</span><span class="badge saved">已沉淀</span></div>
+        <div class="kmeta">流程 4 步 · 最佳实践 1</div>
+      </div>
+      <div class="kitem" data-id="2">
+        <div class="krow"><span class="kicon">👥</span><span class="kname">正反打 · 过肩镜头</span><span class="badge rev">待复核</span></div>
+        <div class="kmeta">流程 5 步 · 产物 2</div>
+      </div>
+      <div class="kitem" data-id="3">
+        <div class="krow"><span class="kicon">🎨</span><span class="kname">机位质感 · 调色</span><span class="badge muted">待定版</span></div>
+        <div class="kmeta">流程 3 步 · 提示词模板 1</div>
+      </div>
+    </div>
+
+    <!-- main -->
+    <div class="main" id="main">
+      <div class="cardhead">
+        <h2 id="cardTitle">分镜脚本优化</h2>
+        <span class="badge pkg" style="font-size:11px">已封装为 Skill</span>
+        <div class="chips">
+          <span class="chip">流程模板</span>
+          <span class="chip">v3</span>
+          <span class="chip">会话 #0312</span>
+        </div>
+      </div>
+
+      <div class="kv">
+        <div class="kvbox"><div class="lb">触发场景</div><div class="vl" id="kvTrigger">分镜需按情绪拆分</div></div>
+        <div class="kvbox"><div class="lb">输入</div><div class="vl" id="kvIn">剧本段落 · 分镜JSON</div></div>
+        <div class="kvbox"><div class="lb">输出</div><div class="vl" id="kvOut">优化分镜 · 提示词</div></div>
+        <div class="kvbox"><div class="lb">回归稳定性</div><div class="vl" id="kvReg">3/3 通过</div></div>
+      </div>
+
+      <div class="block">
+        <div class="bt-title">关键操作流程</div>
+        <div id="ops"></div>
+      </div>
+
+      <div class="block">
+        <div class="bt-title">提示词模板</div>
+        <div class="prm" id="prmBox"><span id="prmText">按"铺垫/冲突/释放"三段切分本镜序列；每镜头输出 {景别,运镜,构图,叙事} 且过基准图一致性校验。</span><span class="copypin" id="copyPrm">⧉ 复制</span></div>
+      </div>
+
+      <div class="block">
+        <div class="bt-title">最佳实践 / 规律</div>
+        <div class="ptags" id="ptags"></div>
+      </div>
+
+      <div class="alertbox"><span class="aico">✦</span><span id="alertText">该卡片已通过 3/3 回归，可「沉淀到工作流知识库」或「一键封装为 Skill」供其他会话复用。</span></div>
+
+      <div class="block" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn" id="btnSave">⊞ 沉淀到知识库</button>
+        <button class="btn primary" id="btnPkg">⬡ 封装为 Skill</button>
+        <span id="saveFlag" style="font-size:12px;color:var(--text-3)"></span>
+      </div>
+
+      <!-- packaging panel -->
+      <div class="packpanel">
+        <div class="packhead"><span class="t">SKILL 封装结果</span><button class="btn primary" id="btnPkgAll">一键封装所选 → Skill 库</button></div>
+        <div class="packgrid">
+          <div class="pkg ok"><span class="pk"><span class="dot g"></span>分镜脚本优化</span><span class="ps">Skill ✓ · 会话可复用</span></div>
+          <div class="pkg ok"><span class="pk"><span class="dot g"></span>运镜·越轴修正</span><span class="ps">Skill ✓ · 会话可复用</span></div>
+          <div class="pkg warn"><span class="pk"><span class="dot r"></span>正反打·过肩镜头</span><span class="ps">待人工复核</span></div>
+          <div class="pkg"><span class="pk"><span class="dot a"></span>机位质感·调色</span><span class="ps">待定版</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div class="footer">
+    <button class="btn">批量沉淀</button>
+    <button class="btn primary" id="btnExport">⇩ 导出 Skill 资产</button>
+    <span class="note">封装输出：SKILL 格式（name / 描述 / 步骤 / 工作流 / 复用入口），可在任意会话中一键调用。沉淀闭环：对话记录 → 知识卡片 → 工作流知识库 → 一键封装 Skill → 会话复用。</span>
+  </div>
+</div>
+
+<!-- skill modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head"><h3>封装为 Skill</h3><button class="close" id="closeModal">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Skill 名称</label><input id="mName" placeholder="如：分镜脚本优化"></div>
+      <div class="field"><label>描述（何时使用）</label><textarea id="mDesc" placeholder="当需要按情绪拆分分镜时，复用本脚本……"></textarea></div>
+      <div class="field"><label>工作流步骤预览</label>
+        <div class="kvtstep" id="mSteps"></div>
+      </div>
+      <div class="field"><label>复用入口</label>
+        <div style="display:flex;gap:8px">
+          <input id="mEntry" value="对话 /workflow:storyboard-optimize" readonly>
+          <button class="btn" id="mCopyEntry" style="flex:none">⧉ 复制</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn" id="cancelModal">取消</button><button class="btn primary" id="mConfirm">确认封装</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const data = [
+  {
+    n:"分镜脚本优化", badge:"已封装", bc:"pkg", key:"🎬",
+    trg:"分镜需按情绪拆分", inn:"剧本段落 · 分镜JSON", out:"优化分镜 · 提示词", reg:"3/3 通过",
+    saved:true, pkg:true,
+    ops:[["解析剧本段落，抽取情绪与叙事节点","→ 工具：解析器"],["按三情拆分镜头（铺垫/冲突/释放）","→ 工具：分镜Agent"],["为每镜头附加景别·运镜·构图指令","→ 工具：编排Agent"],["过基准图校验一致性","→ 工具：图库/对比"]],
+    prm:"按\"铺垫/冲突/释放\"三段切分本镜序列；每镜头输出 {景别,运镜,构图,叙事} 且过基准图一致性校验。",
+    tags:["情绪转折点拍慢","对白前给反应镜头","越轴用低机位补偿"],
+    alert:"该卡片已通过 3/3 回归，可「沉淀到工作流知识库」或「一键封装为 Skill」供其他会话复用。",
+    steps:["1. 解析剧本段落，抽取情绪与叙事节点","2. 按三情拆分镜头（铺垫/冲突/释放）","3. 每镜头附加景别·运镜·构图指令","4. 过基准图一致性校验"]
+  },
+  {
+    n:"运镜 · 越轴修正", badge:"已沉淀", bc:"saved", key:"🎥",
+    trg:"出现越轴/180°线反转", inn:"分镜JSON · 摄像机位", out:"修正后运镜方案", reg:"2/3 通过",
+    saved:true, pkg:true,
+    ops:[["识别轴线关系与越轴点","→ 工具：几何检测"],["规划过肩/骑越镜头补救","→ 工具：编排Agent"],["重设机位并输出运镜提示词","→ 工具：提示词Agent"]],
+    prm:"检测 180° 主轴；越轴处使用中性直视 / 骑越镜头过渡。运镜输出 {机位,高度,运动,时长}。",
+    tags:["越轴用低机位补偿","180°线优先中性镜头"],
+    alert:"该卡片已沉淀，可再次封装或直接供会话调用。",
+    steps:["1. 识别轴线关系与越轴点","2. 规划过肩/骑越镜头补救","3. 重设机位并输出运镜提示词"]
+  },
+  {
+    n:"正反打 · 过肩镜头", badge:"待复核", bc:"rev", key:"👥",
+    trg:"对话场次需正反打", inn:"剧情段落 · 对白", out:"正反打分镜方案", reg:"待检",
+    saved:false, pkg:false,
+    ops:[["锁定视线方向与对话轴","→ 工具：编排Agent"],["生成过肩 A 位（主导者）","→ 工具：分镜Agent"],["生成过肩 B 位（反打）","→ 工具：分镜Agent"],["对位主体与焦点一致性校验","→ 工具：图库/对比"]],
+    prm:"对话场先视线轴线，主导者给过肩大景，响应者给过肩反打；焦点落在眼球连线。",
+    tags:["主导者先起幅","焦点对眼球连线"],
+    alert:"该卡片尚待人工复核，复核通过后再沉淀 / 封装。",
+    steps:["1. 锁定视线方向与对话轴","2. 生成过肩 A 位（主导者）","3. 生成过肩 B 位（反打）","4. 对位主体焦点一致性校验"]
+  },
+  {
+    n:"机位质感 · 调色", badge:"待定版", bc:"muted", key:"🎨",
+    trg:"建立镜头氛围基调", inn:"故事基调 · 风格参考", out:"调色提示词模板", reg:"—",
+    saved:true, pkg:false,
+    ops:[["提取故事基调关键词","→ 工具：剧本Agent"],["对标胶片风格（质感/取舍）","→ 工具：风格库"]],
+    prm:"以 {基调} 定色温与对比；高光偏 {暖/冷}，阴影提升 {气氛} 保留胶片颗粒。",
+    tags:["暖高光泄暖","颗粒保留"],
+    alert:"待定版：样式尚未稳定，建议先建立风格回归样本。",
+    steps:["1. 提取故事基调关键词","2. 对标胶片风格（质感/取舍）"]
+  }
+];
+
+const n = el => document.getElementById(el);
+let cur = 0;
+let savedCount=4, pkgCount=2, archCount=12;
+
+function renderCard(i){
+  const d = data[i];
+  cur=i;
+  n("cardTitle").textContent = d.n;
+  // clear badge
+  n("kvTrigger").textContent=d.trg; n("kvIn").textContent=d.inn; n("kvOut").textContent=d.out; n("kvReg").textContent=d.reg;
+  n("prmText").textContent=d.prm;
+  n("alertText").textContent=d.alert;
+  n("ops").innerHTML = d.ops.map(o=>`<div class="opstep"><span class="opno">${o[0].split(' ')[0].replace(/^步骤?/,'')||'•'}</span><div class="opdesc"><div class="od">${o[0]}</div><div class="ot">${o[1]}</div></div></div>`).join('');
+  n("ptags").innerHTML = d.tags.map(t=>`<span class="ptag"><b>◆</b>${t}</span>`).join("");
+  n("mSteps").innerHTML = d.steps.map(s=>`<span>▪ ${s}</span>`).join("");
+  n("mName").value=d.n;
+  n("mDesc").value=`当${d.trg}时，复用${d.n}工作流。`;
+  n("kvReg").textContent=d.reg;
+  // selected highlight
+  document.querySelectorAll(".kitem").forEach((el,idx)=>{
+    el.classList.toggle("on", idx===i);
+  });
+  // state flags
+  const saveFlag = n("saveFlag");
+  saveFlag.innerHTML = ""; // reset
+  // opno simplify: rebuild properly with index
+  n("ops").innerHTML = d.ops.map((o,k)=>`<div class="opstep"><span class="opno">${k+1}</span><div class="opdesc"><div class="od">${o[0]}</div><div class="ot">${o[1]}</div></div></div>`).join("");
+  // update main badge
+  let badge;
+  if(d.pkg) badge = '<span class="badge pkg" style="font-size:11px">已封装为 Skill</span>';
+  else if(d.saved) badge = '<span class="badge saved" style="font-size:11px">已沉淀</span>';
+  else badge = `<span class="badge ${d.bc}" style="font-size:11px">${d.badge}</span>`;
+  // remove old .main-badge then add
+  const ch = n("cardTitle").parentElement;
+  const old = ch.querySelector(".main-badge"); if(old) old.remove();
+  ch.insertAdjacentHTML("beforeend", badge.replace("已封装为 Skill",'已封装为 Skill').replace('badge pkg','badge pkg main-badge').replace('badge saved','badge saved main-badge'));
+}
+
+function toast(html){
+  const t = n("toast");
+  t.innerHTML = html;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+document.querySelectorAll(".kitem").forEach(el=>{
+  el.addEventListener("click", ()=> renderCard(+el.dataset.id));
+});
+
+n("btnSave").addEventListener("click", ()=>{
+  const d=data[cur];
+  d.saved=true;
+  toast(`<span class="t-ok">✓</span> 已沉淀「${d.n}」到工作流知识库`);
+  savedCount = savedCount || 1; savedCount = (savedCount>0? savedCount:1);
+  n("savedCount").textContent = savedCount+0;
+  refreshAside();
+});
+
+n("btnPkg").addEventListener("click", ()=>{
+  const d=data[cur];
+  if(!d.saved){ toast(`<span class="t-br">◖</span> 请先「沉淀到知识库」再封装`); return; }
+  n("overlay").classList.add("open");
+  n("mSteps").innerHTML = d.steps.map(s=>`<span>▪ ${s}</span>`).join("");
+});
+
+function refreshAside(){
+  renderCard(cur);
+  // update aside badges
+  document.querySelectorAll(".kitem").forEach((el,i)=>{
+    const d=data[i];
+    const b=el.querySelector(".badge");
+    if(d.pkg){ b.className="badge pkg"; b.textContent="已封装"; }
+    else if(d.saved){ b.className="badge saved"; b.textContent="已沉淀"; }
+    else if(d.bc==="rev"){ b.className="badge rev"; b.textContent="待复核"; }
+    else { b.className="badge muted"; b.textContent="待定版"; }
+  });
+}
+
+function doPkg(){
+  const d=data[cur];
+  d.pkg=true; d.saved=true;
+  pkgCount=(pkgCount||0)+1;
+  n("pkgCount").textContent=pkgCount;
+  n("overlay").classList.remove("open");
+  refreshAside();
+  toast(`<span class="t-fm">⬡</span>「${d.n}」已封装为 <b>Skill</b>，可在会话中一键复用`);
+}
+
+n("mConfirm").addEventListener("click", doPkg);
+n("cancelModal").addEventListener("click", ()=>n("overlay").classList.remove("open"));
+n("closeModal").addEventListener("click", ()=>n("overlay").classList.remove("open"));
+n("overlay").addEventListener("click", e=>{ if(e.target===n("overlay")) n("overlay").classList.remove("open"); });
+
+n("copyPrm").addEventListener("click", ()=>{
+  const d=data[cur];
+  if(navigator.clipboard) navigator.clipboard.writeText(d.prm).then(()=>toast(`<span class="t-br">⧉</span> 提示词已复制`));
+});
+
+n("btnPkgAll").addEventListener("click", ()=>{
+  data.forEach(d=>{ if(d.saved && !d.rev){ d.pkg=true; } });
+  pkgCount = data.filter(d=>d.pkg).length;
+  n("pkgCount").textContent=pkgCount;
+  refreshAside();
+  toast(`<span class="t-fm">⬡</span> 已将已沉淀卡片批量封装到 Skill 库`);
+});
+n("btnExport").addEventListener("click", ()=>toast(`<span class="t-ok">⇩</span> 已导出 Skill 资产包（json）`));
+n("btnNew").addEventListener("click", ()=>toast(`<span class="t-br">＋</span> 已新建复盘会话（导入对话记录）`));
+
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");
+    toast(`<span class="t-br">↔</span> 切换到「${t.textContent.trim()}」视图`);
+  });
+});
+
+renderCard(0);
+</script>
+</body>
+</html>
