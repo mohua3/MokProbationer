@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>影视编导策划智能体 · 总汇终版技术文档</title>
+<style>
+:root{
+  --bg:#0e1116; --panel:#161b23; --panel2:#1d242f;
+  --ink:#e6edf3; --muted:#8b98a9; --line:#2a3340;
+  --brand:#8b5cf6; --brand2:#a78bfa; --amber:#f59e0b; --cyan:#22d3ee;
+  --serif:'Georgia','Songti SC','STSong',serif; --sans:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.75}
+.layout{display:flex;min-height:100vh}
+/* 侧栏 */
+.toc{width:300px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:22px 18px;position:sticky;top:0;height:100vh;overflow-y:auto;font-size:13px}
+.toc-brand{font-family:var(--serif);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:.5px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.toc-brand span{color:var(--brand2)}
+.toc a{display:block;color:var(--muted);text-decoration:none;padding:6px 8px;border-radius:6px;margin:1px 0;border-left:2px solid transparent}
+.toc a:hover{color:var(--ink);background:var(--panel2)}
+.toc a.h2{font-weight:600;color:var(--ink)}
+.toc a.h3{padding-left:22px}
+/* 主内容 */
+.doc{flex:1;max-width:900px;margin:0 auto;padding:40px 48px 80px}
+.hero{border-bottom:1px solid var(--line);padding-bottom:26px;margin-bottom:34px}
+.hero .tag{display:inline-block;font-size:11px;letter-spacing:.12em;color:var(--amber);border:1px solid var(--line);padding:3px 10px;border-radius:20px;margin-bottom:14px;background:#0a0e14}
+.hero h1{font-family:var(--serif);font-size:30px;margin:0 0 8px;line-height:1.3}
+.hero .sub{color:var(--muted);font-size:15px}
+.doc h1{font-family:var(--serif);font-size:25px;border-bottom:1px solid var(--line);padding-bottom:12px;margin:44px 0 18px;scroll-margin-top:20px}
+.doc h1::before{content:'';display:inline-block;width:8px;height:22px;background:var(--brand);margin-right:12px;border-radius:2px;vertical-align:-3px}
+.doc h2{font-size:19px;margin:30px 0 12px;color:#eef2f7;scroll-margin-top:20px}
+.doc h3{font-size:16px;margin:24px 0 10px;color:var(--brand2);scroll-margin-top:20px}
+.doc p{margin:10px 0}
+.doc ul,.doc ol{margin:10px 0;padding-left:24px}
+.doc li{margin:5px 0}
+.doc strong{color:#fff}
+.doc code{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;font-size:13px;font-family:'JetBrains Mono','SF Mono',Consolas,monospace;color:var(--cyan)}
+.doc pre{background:#0b0f15;border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;margin:14px 0}
+.doc pre code{background:none;border:none;padding:0;color:#c9d1d9;font-size:13px;line-height:1.6}
+pre.mermaid-wrapper{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;overflow-x:auto;margin:14px 0;text-align:center}
+.mermaid{display:inline-block}
+.mermaid svg{max-width:100%;height:auto}
+.doc blockquote{border-left:3px solid var(--brand);background:var(--panel);margin:14px 0;padding:10px 16px;color:var(--muted);border-radius:0 8px 8px 0}
+.doc table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13.5px}
+.doc th,.doc td{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.doc th{background:var(--panel2);color:var(--ink)}
+.doc tr:nth-child(even) td{background:#12171f}
+mark{background:#3b2f10;color:var(--amber);padding:0 4px;border-radius:3px}
+a{color:var(--brand2)}
+/* 顶部进度条 */
+.progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--brand),var(--amber));width:0;z-index:99}
+@media(max-width:900px){.toc{display:none}.doc{padding:24px 20px}}
+</style>
+</head>
+<body>
+<div class="progress" id="pb"></div>
+<div class="layout">
+  <nav class="toc" id="toc"><div class="toc-brand">影视编导智能体 <span>· 总汇终版</span></div><div id="tocBody"></div></nav>
+  <main class="doc">
+    <div class="hero">
+      <span class="tag">总汇终版 · v2.0</span>
+      <h1>影视编导策划智能体 · 总汇终版技术文档</h1>
+      <div class="sub">小说→剧本→分镜→提示词→电影级分镜编排 · 桌面应用智能体 · 复盘沉淀与训练闭环 · 行业对齐验证</div>
+    </div>
+    <h1>影视编导策划智能体 · 总汇终版技术文档</h1>
+<blockquote>
+<p><strong>文档版本</strong>：V2.0（终版）　<strong>编制日期</strong>：2026-09-21　<strong>文档状态</strong>：方案终审定稿（进入实现）
+<strong>本版相较 V1.0 的变更</strong>：融合了《行业对齐验证评估报告》的结论与改良建议（P0–P2），对「Agent 编排底座」「MCP 扩展」「一致性评估」「界面埋点」「冷启动训练」五处做了针对性修订，并新增「行业对齐与落地路径」章节。全文为唯一权威技术基线。</p>
+</blockquote>
+<hr>
+<h2>目录</h2>
+<ul>
+<li><a href="#1-%E6%96%87%E6%A1%A3%E8%AF%B4%E6%98%8E">1. 文档说明</a></li>
+<li><a href="#2-%E4%BA%A7%E5%93%81%E6%84%BF%E6%99%AF%E4%B8%8E%E5%AE%9A%E4%BD%8D">2. 产品愿景与定位</a></li>
+<li><a href="#3-%E5%8F%AF%E8%A1%8C%E6%80%A7%E7%BB%93%E8%AE%BA%E4%B8%8E%E5%BC%80%E6%BA%90%E5%AF%B9%E6%A0%87">3. 可行性结论与开源对标</a></li>
+<li><a href="#4-%E4%BA%A7%E5%93%81%E5%8A%9F%E8%83%BD%E6%80%BB%E8%A7%88">4. 产品功能总览</a></li>
+<li><a href="#5-%E7%B3%BB%E7%BB%9F%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E7%BB%88%E7%89%88">5. 系统总体架构（终版）</a></li>
+<li><a href="#6-%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B">6. 技术选型</a></li>
+<li><a href="#7-%E6%A0%B8%E5%BF%83%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%85%B3%E7%B3%BB%E5%9B%BE">7. 核心数据模型与关系图</a></li>
+<li><a href="#8-%E5%A4%9A-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%BC%96%E6%8E%92%E7%BB%88%E7%89%88">8. 多 Agent 工作流编排（终版）</a></li>
+<li><a href="#9-%E5%A4%96%E9%83%A8-api-%E4%B8%8E-mcp-%E6%8E%A5%E5%85%A5%E5%B1%82">9. 外部 API 与 MCP 接入层</a></li>
+<li><a href="#10-%E8%83%BD%E5%8A%9B%E6%8F%90%E5%8D%87%E4%B8%8E%E8%AE%AD%E7%BB%83%E9%97%AD%E7%8E%AF">10. 能力提升与训练闭环（含冷启动与埋点）</a></li>
+<li><a href="#11-%E6%A1%8C%E9%9D%A2%E7%AB%AF-uiux-%E8%AE%BE%E8%AE%A1">11. 桌面端 UI/UX 设计</a></li>
+<li><a href="#12-%E5%A4%8D%E7%9B%98%E6%B2%89%E6%B7%80%E5%8A%9F%E8%83%BD">12. 复盘沉淀功能</a></li>
+<li><a href="#13-%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%84%E4%BC%B0%E4%B8%8E%E8%B4%A8%E9%87%8F%E5%9B%9E%E5%BD%92%E6%96%B0%E5%A2%9E">13. 一致性评估与质量回归（新增）</a></li>
+<li><a href="#14-%E8%A1%8C%E4%B8%9A%E5%AF%B9%E9%BD%90%E4%B8%8E%E8%90%BD%E5%9C%B0%E8%B7%AF%E5%BE%84%E6%96%B0%E5%A2%9E%E7%BB%88%E7%89%88">14. 行业对齐与落地路径（新增/终版）</a></li>
+<li><a href="#15-%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83">15. 代码开发规范</a></li>
+<li><a href="#16-%E6%8E%A8%E8%8D%90%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E7%BB%88%E7%89%88">16. 推荐项目结构（终版）</a></li>
+<li><a href="#17-%E5%BC%80%E5%8F%91%E9%87%8C%E7%A8%8B%E7%A2%91%E7%BB%88%E7%89%88">17. 开发里程碑（终版）</a></li>
+<li><a href="#18-%E9%A3%8E%E9%99%A9%E4%B8%8E%E5%AF%B9%E7%AD%96%E7%BB%88%E7%89%88">18. 风险与对策（终版）</a></li>
+<li><a href="#%E9%99%84%E5%BD%95-a--%E8%AE%BE%E8%AE%A1%E5%9B%BE%E7%A8%BF%E7%B4%A2%E5%BC%95">附录 A · 设计图稿索引</a></li>
+<li><a href="#%E9%99%84%E5%BD%95-b--%E4%B8%8E-v10-%E7%9A%84%E5%8F%98%E6%9B%B4%E5%AF%B9%E7%85%A7">附录 B · 与 V1.0 的变更对照</a></li>
+</ul>
+<hr>
+<h2>1. 文档说明</h2>
+<h3>1.1 文档地位</h3>
+<p>本总汇终版（V2.0）是项目的唯一权威技术基线，整合了：</p>
+<ul>
+<li>《开发可行性分析评估报告》</li>
+<li>《类似 Codex 桌面应用评估报告》</li>
+<li>《桌面应用技术架构设计图》《布局工程图》《复盘沉淀工程图》《交互原型》</li>
+<li>《复盘沉淀功能技术方案》</li>
+<li>《行业对齐验证评估报告》及其改良建议（P0–P2）</li>
+</ul>
+<h3>1.2 符号约定</h3>
+<ul>
+<li><code>代码</code>：标识符 / Schema 字段。</li>
+<li>🧩：设计决策。　⚠️：风险或需注意点。</li>
+<li>【P0/P1/P2】：改良建议的落地优先级（P0 最优先）。</li>
+</ul>
+<hr>
+<h2>2. 产品愿景与定位</h2>
+<h3>2.1 一句话定位</h3>
+<p>一款<strong>只做「导演与策划智慧」的智能体</strong>：把小说改编成剧本、剧本拆成分镜、分镜推导<strong>精确生图/生视频提示词</strong>，并将基准图回传完成<strong>电影级分镜编排</strong>；以桌面化对话工作台交付，通过评审复盘与可投喂训练持续进化。</p>
+<h3>2.2 核心差异化（终版明确）</h3>
+<ol>
+<li><strong>聚焦&quot;策划层&quot;，不做通用渲染器</strong>（生图/生视频外包）。</li>
+<li><strong>更强的专业壁垒</strong>：能产出行内认可的镜头语汇、越轴修正、叙事节奏。</li>
+<li><strong>模型无关</strong>：全部生成能力走外部 API，利于私有化与快速迭代。</li>
+</ol>
+<blockquote>
+<p>🧩 终版新增原则：<strong>编排复用成熟 Agent SDK 底座，自研重心放在&quot;分镜/资产/评审&quot;的专科 prompt 与工具上</strong>，不自建重型 loop 调度（依据行业对齐结论，见 14 章）。</p>
+</blockquote>
+<hr>
+<h2>3. 可行性结论与开源对标</h2>
+<h3>3.1 可行性结论（终版维持）</h3>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>成熟度</th>
+<th>落点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>剧本改编</td>
+<td>✅ 成熟</td>
+<td>双阶段解耦；剧本 Schema</td>
+</tr>
+<tr>
+<td>分镜脚本</td>
+<td>✅ 成熟偏半</td>
+<td>分镜 JSON + 领域知识库</td>
+</tr>
+<tr>
+<td>资产提示词推导</td>
+<td>✅ 成熟（差异化）</td>
+<td>精确提示词，不生成图</td>
+</tr>
+<tr>
+<td>基准图回传→再编排</td>
+<td>✅ 成熟</td>
+<td>IP-Adapter/ControlNet/Qwen 参考图</td>
+</tr>
+<tr>
+<td>电影级编排</td>
+<td>⚠️ 半成熟</td>
+<td>编排知识库 + 镜头语汇提示词，需人工把关</td>
+</tr>
+<tr>
+<td>持续训练自进化</td>
+<td>✅ 可行（须受控）</td>
+<td>RAG 即时层 + 定期微调 + 【P1】数据飞轮埋点</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 开源生态对标</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>方向</th>
+<th>可复用能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ArcReel（4.2k★）</td>
+<td>AI 短剧工作台</td>
+<td>6 阶段 Agent、角色/场景/道具资产库、多供应商协议</td>
+</tr>
+<tr>
+<td>Story Claw</td>
+<td>小说→分镜</td>
+<td>分镜 <code>panels_*.json</code> 结构</td>
+</tr>
+<tr>
+<td>ViMax（1万+★）</td>
+<td>想法→成片</td>
+<td>5 Agent 编排、RAG、Quality Control Agent</td>
+</tr>
+<tr>
+<td>ScripterAgent（腾讯）</td>
+<td>对话→剧本</td>
+<td>Director/Critic、两阶段训练</td>
+</tr>
+<tr>
+<td>Cline（68.1k★, 11M+）</td>
+<td>开源 coding agent</td>
+<td>桌面原生、SDK 嵌入、多模型、MCP、Skills（本方案底座参考）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>4. 产品功能总览</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>能力</th>
+<th>交付物</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>剧本改编</td>
+<td>小说→分场剧本</td>
+<td>结构化剧本</td>
+</tr>
+<tr>
+<td>分镜脚本</td>
+<td>剧本→镜头列表</td>
+<td>分镜 JSON</td>
+</tr>
+<tr>
+<td>提示词推导</td>
+<td>分镜→精确提示词</td>
+<td>角色/场景/道具/服饰文本提示词</td>
+</tr>
+<tr>
+<td>分镜编排</td>
+<td>→电影级分镜</td>
+<td>构图/景别/运镜/色彩/叙事/配音指令</td>
+</tr>
+<tr>
+<td>评审 / 迭代</td>
+<td>Critic 择优+修订</td>
+<td>修订建议 + 基准图一致性复核</td>
+</tr>
+<tr>
+<td>复盘沉淀</td>
+<td>对话→知识→Skill</td>
+<td>知识卡片 + Skill 封装 + 复用闭环</td>
+</tr>
+<tr>
+<td><strong>采纳埋点【P1】</strong></td>
+<td>对话内 Accept/Reject+理由</td>
+<td>训练数据飞轮样本</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>5. 系统总体架构（终版）</h2>
+<h3>5.1 架构分层图（终版，含 SDK 底座与 MCP）</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│ ① 表现层（桌面 UI · Tauri2 + 系统WebView + React/TS）        │
+│   ├─ 对话窗口   ├─ 分镜工作台   ├─ 资产·基准图区             │
+│   └─ 复盘沉淀中心（独立窗口） + 【P1】采纳埋点按钮(✓Approved/✗Rejected/?) │
+├─────────────────────────────────────────────────────────────┤
+│ ② Agent 核心（本地 Rust 服务层）                            │
+│   ├─ 复用成熟 Agent SDK/编排底座（不自建重型 loop）【P0】    │
+│   ├─ 多 Agent 专科提示词 + 工具：剧本/分镜/资产/编排/评审    │
+│   ├─ 工具沙箱：tool-call · 上下文管理（session thread）      │
+│   ├─ WorkflowNode 结构化 artifact + 埋点日志落库            │
+├─────────────────────────────────────────────────────────────┤
+│ ③ 工具与数据层（本地可调）                                   │
+│   ├─ Schema 读写校验 · SQLite 持久化                        │
+│   └─ 向量库（本地）+ 资产图库 + 【P1】一致性评估基准库       │
+├─────────────────────────────────────────────────────────────┤
+│ ④ 接入层（供应商适配 + MCP）                                │
+│   ├─ 国内 LLM / 生图 / 生视频 / TTS（可插拔，本地 vLLM/Ollama）│
+│   └─ 【P0】MCP 服务器接入（音效库/资产平台/第三方工具）      │
+└─────────────────────────────────────────────────────────────┘
+   数据飞轮：采纳埋点 → 复审归档 → 定期微调 → 一致性Evals回归 → 受控迭代
+</code></pre>
+<h3>5.2 终版关键设计决策</h3>
+<table>
+<thead>
+<tr>
+<th>决策</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🧩【P0】编排底座复用</td>
+<td>不重写 loop/上下文切割，复用 Claude Agent SDK / Cline SDK / 国内 LLM 的 agent SDK</td>
+</tr>
+<tr>
+<td>🧩【P0】自研重心</td>
+<td>聚焦分镜/资产/评审的<strong>专科 prompt + 专科工具</strong></td>
+</tr>
+<tr>
+<td>🧩【P1】采纳埋点</td>
+<td>对话即训：Accept/Reject/Unknown 三元 + 理由，落 <code>WorkflowNode</code></td>
+</tr>
+<tr>
+<td>🧩【P1】一致性可度量</td>
+<td>建立一致性评估基准库 vs 质量回归</td>
+</tr>
+<tr>
+<td>🧩【P2】评审低成本</td>
+<td>评审子代理用轻快/低成本模型</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>6. 技术选型</h2>
+<h3>6.1 桌面壳选型</h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>安装包</th>
+<th>内存(6窗口)</th>
+<th>后端</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tauri 2（推荐）</strong></td>
+<td>8.6MB</td>
+<td>~172MB</td>
+<td>Rust，安全隔离</td>
+<td>轻量、可私有化、承载工具层</td>
+</tr>
+<tr>
+<td>Electron</td>
+<td>244MB</td>
+<td>~409MB</td>
+<td>Node</td>
+<td>重，不适用轻量 agent</td>
+</tr>
+<tr>
+<td>Python GUI</td>
+<td>大/中</td>
+<td>高</td>
+<td>Python</td>
+<td>跨端分发弱</td>
+</tr>
+</tbody>
+</table>
+<h3>6.2 前端栈</h3>
+<p>React + Vite（TS 严格模式）；状态 Zustand；分镜时间轴自定义 Canvas 或 <code>react-zoom-pan-pinch</code>。</p>
+<h3>6.3 后端 / Agent 栈（终版）</h3>
+<ul>
+<li><strong>Rust 服务层</strong>（Tauri 命令）+ 可选 tokio。</li>
+<li><strong>Agent 编排</strong>：复用成熟 Agent SDK 底座（见 5.2），不重写 loop。</li>
+<li>🧩【P0】通过 SDK 的 coordinator 机制声明 “roster” 子代理（剧本/分镜/资产/编排/评审），各自独立 session thread。</li>
+</ul>
+<h3>6.4 LLM / 向量 / 微调</h3>
+<ul>
+<li>LLM：通义 / 豆包 / DeepSeek / Kimi。</li>
+<li>向量：<code>sqlite-vec</code> / <code>lance</code>，大规模 Qdrant。</li>
+<li>嵌入：<code>text-embedding-v3</code> / <code>BGE-M3</code>，多模态 CLIP。</li>
+<li>微调：LlamaFactory / Unsloth / Axolotl（LoRA/QLoRA + SFT/DPO/GRPO）。</li>
+</ul>
+<hr>
+<h2>7. 核心数据模型与关系图</h2>
+<h3>7.1 领域核心概念（终版）</h3>
+<p>剧本 / 分镜 / 资产卡 / WorkflowNode / 知识卡片 / SkillSpec，另新增：<strong>采纳埋点样本（annotation）</strong> 与 <strong>一致性回归基准（consistency_set）</strong>。</p>
+<h3>7.2 ER 关系示意</h3>
+<pre class="mermaid-wrapper"><div class="mermaid">erDiagram
+  PROJECT ||--|{ SESSION : has
+  SESSION ||--|{ WORKFLOW_NODE : logs
+  SESSION ||--|{ SCRIPT : produces
+  SCRIPT ||--|{ STORYBOARD : gets
+  STORYBOARD }|--|{ SHOT : contains
+  PROJECT ||--|{ ASSET_CARD : holds
+  SHOT }|--o{ ASSET_CARD : references
+  WORKFLOW_NODE }o--o| ANNOTATION : carries_verdict
+  SESSION }o--o{ KNOWLEDGE_CARD : distilled_into
+  KNOWLEDGE_CARD }o--o{ SKILL_SPEC : compiled_into
+  CONSISTENCY_SET ||--|{ SHOT : verifies_against
+</div></pre><h3>7.3 关键实体 Schema</h3>
+<p><strong>剧本片段</strong></p>
+<pre><code class="language-jsonc">{ &quot;script_id&quot;:&quot;sc_001&quot;,&quot;title&quot;:&quot;夜航&quot;,&quot;scenes&quot;:[
+  { &quot;scene_no&quot;:3,&quot;location&quot;:&quot;船舱甲板&quot;,&quot;time&quot;:&quot;夜&quot;,
+    &quot;beats&quot;:[{&quot;type&quot;:&quot;action|dialogue&quot;,&quot;speaker&quot;:&quot;船长&quot;,&quot;text&quot;:&quot;…&quot;,&quot;emotion&quot;:&quot;压抑&quot;}],
+    &quot;intent&quot;:&quot;揭示船长内心的动摇&quot; } ] }
+</code></pre>
+<p><strong>镜头</strong></p>
+<pre><code class="language-jsonc">{ &quot;shot_id&quot;:&quot;st_0302&quot;,&quot;scene&quot;:3,&quot;goal&quot;:&quot;渲染孤寂&quot;,&quot;shot_type&quot;:&quot;over_shoulder&quot;,
+  &quot;camera&quot;:{&quot;height&quot;:&quot;eye&quot;,&quot;move&quot;:&quot;dolly-in&quot;,&quot;lens&quot;:&quot;50mm&quot;},
+  &quot;composition&quot;:&quot;三分法，主体右1/3&quot;,&quot;color&quot;:&quot;冷蓝+暖高光&quot;,&quot;narrative&quot;:&quot;慢节奏&quot;,
+  &quot;voice&quot;:&quot;小型弦乐铺底&quot; }
+</code></pre>
+<p><strong>WorkflowNode（含埋点）【P1】</strong></p>
+<pre><code class="language-jsonc">{ &quot;node_id&quot;:&quot;wf_8f2c1a&quot;,&quot;session_id&quot;:&quot;sess_0312&quot;,&quot;type&quot;:&quot;tool_call&quot;,
+  &quot;agent&quot;:&quot;storyboard_agent&quot;,&quot;tool&quot;:&quot;storyboard_updater&quot;,&quot;args_snapshot&quot;:{&quot;scene&quot;:3},
+  &quot;produced_artifacts&quot;:[&quot;art_ff1&quot;],&quot;result_status&quot;:&quot;applied&quot;,
+  &quot;verdict&quot;:{&quot;label&quot;:&quot;accepted&quot;,&quot;reason&quot;:&quot;情绪切分更清晰&quot;,&quot;reviewer&quot;:&quot;human|critic&quot;}, &quot;ts&quot;:1752120000000 }
+</code></pre>
+<blockquote>
+<p>【P1】<code>verdict</code> 三元：<code>accepted</code> / <code>rejected</code> / <code>unknown</code>，携带 <code>reason</code>，是数据飞轮的核心样本源。</p>
+</blockquote>
+<p><strong>KnowledgeCard / SkillSpec</strong> —— 见第 12 章。</p>
+<hr>
+<h2>8. 多 Agent 工作流编排（终版）</h2>
+<h3>8.1 Agent 清单（Actor / Critic，终版）</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>角色</th>
+<th>输入</th>
+<th>输出</th>
+<th>模型层级建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主控 Draft</td>
+<td>任务分发</td>
+<td>用户意图</td>
+<td>调度计划</td>
+<td>强模型</td>
+</tr>
+<tr>
+<td>剧本改编 Agent</td>
+<td>小说→剧本</td>
+<td>原文</td>
+<td>Script</td>
+<td>中/强</td>
+</tr>
+<tr>
+<td>分镜脚本 Agent</td>
+<td>剧本→镜头</td>
+<td>Script</td>
+<td>Storyboard</td>
+<td>中</td>
+</tr>
+<tr>
+<td>资产提示词 Agent</td>
+<td>提示词推导</td>
+<td>剧本/镜头</td>
+<td>资产提示词</td>
+<td>中</td>
+</tr>
+<tr>
+<td>分镜编排 Agent</td>
+<td>电影级编排</td>
+<td>分镜+资产</td>
+<td>全维编排指令</td>
+<td>强</td>
+</tr>
+<tr>
+<td><strong>评审 Critic Agent【P2】</strong></td>
+<td>择优+修订</td>
+<td>多版分镜</td>
+<td>评分+可落地修订建议</td>
+<td><strong>轻快/低成本模型</strong></td>
+</tr>
+<tr>
+<td>配音音效顾问 Agent</td>
+<td>音效设计</td>
+<td>分镜</td>
+<td>对白节奏/音效/配乐指令</td>
+<td>轻快</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🧩 依据 orchestrator-worker：<strong>规划/编排用强模型，评审与专科 worker 用弱/快模型</strong>，降本提速。</p>
+</blockquote>
+<h3>8.2 主链路编排（终版，SDK coordinator + 结构化 artifact）</h3>
+<pre class="mermaid-wrapper"><div class="mermaid">sequenceDiagram
+  participant U as 用户
+  participant C as 主控Coordinator
+  participant S as 剧本Agent
+  participant SB as 分镜Agent
+  participant P as 资产Agent
+  participant D as 编排Agent
+  participant R as 评审Critic
+  U-&gt;&gt;C: 投喂小说
+  C-&gt;&gt;S: 委派改编
+  S--&gt;&gt;C: Script (artifact)
+  C-&gt;&gt;SB: 委派生成分镜
+  SB--&gt;&gt;C: Storyboard (artifact)
+  C-&gt;&gt;P: 委派提示词
+  P--&gt;&gt;C: 资产提示词
+  C-&gt;&gt;D: 委派电影级编排
+  D--&gt;&gt;C: 编排指令
+  C-&gt;&gt;R: 多版择优(评审)
+  R--&gt;&gt;C: 修订建议
+  C--&gt;&gt;U: 回传基准图后再编排闭环
+</div></pre><blockquote>
+<p>通过 SDK coordinator 的 roster/子代理 + session thread 实现（复用底座，见 5.2）。</p>
+</blockquote>
+<h3>8.3 一致性策略（防&quot;角色精分&quot;）</h3>
+<ol>
+<li>资产库先行：先建三类资产卡，全部分镜基于资产卡生成。</li>
+<li>参考图条件控制：IP-Adapter / ControlNet / StoryMaker / LoRA。</li>
+<li>上下文管理：事件→场景→镜头三级分解 + RAG 全局语境（ViMax 验证）。</li>
+</ol>
+<hr>
+<h2>9. 外部 API 与 MCP 接入层</h2>
+<h3>9.1 生成能力供应商</h3>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th>可选供应方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLM</td>
+<td>通义 / 豆包 / DeepSeek / Kimi（OpenAI 兼容或各家 SDK）</td>
+</tr>
+<tr>
+<td>生图</td>
+<td>Seedream / 通义万相 / FLUX / GPT-Image</td>
+</tr>
+<tr>
+<td>生视频</td>
+<td>Seedance / 可灵 / Vidu / Sora / Veo</td>
+</tr>
+<tr>
+<td>TTS</td>
+<td>各家云 TTS</td>
+</tr>
+</tbody>
+</table>
+<h3>9.2 协议抽象</h3>
+<p>供应商协议 + 自定义端点 + 本地 <code>Ollama</code>/<code>vLLM</code>。Agent 只按语义选能力，不绑定厂商（对齐 Cline “任意/OpenAI兼容 endpoint + bring your own key”）。</p>
+<h3>9.3 【P0】MCP 接入（本版新增）</h3>
+<ul>
+<li>通过 MCP 服务器接入第三方能力：音效库、资产平台、剪辑 API、素材检索等。</li>
+<li>子代理可挂不同 MCP（对齐 Managed Agents “各自独立配置 MCP” 的设计）。</li>
+<li>示例：评审子代理挂 <code>assets-mcp</code> 做基准图一致性校验、<code>sfx-mcp</code> 做音效匹配。</li>
+</ul>
+<h3>9.4 接入规范</h3>
+<ul>
+<li>凭证存 OS Keychain，仅 Rust 侧透传，不入渲染层。</li>
+<li>统一错误码与降级提示（限流/欠费/网络）；【P2】生成结果本地落资产库缓存的复用策略。</li>
+</ul>
+<hr>
+<h2>10. 能力提升与训练闭环</h2>
+<h3>10.1 三层递进机制</h3>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>机制</th>
+<th>作用</th>
+<th>迭代速度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>短期·记忆层</td>
+<td>评审结果+采纳样本进向量库(RAG)</td>
+<td>零样本沉淀偏好/范式/规避点</td>
+<td>即时生效</td>
+</tr>
+<tr>
+<td>中期·权重层</td>
+<td>LoRA/QLoRA + SFT/DPO 定期重训</td>
+<td>记忆升级为内化能力</td>
+<td>按版本触发</td>
+</tr>
+<tr>
+<td>长期·规范层</td>
+<td>Schema 版本 + 提示词库 + 评审清单</td>
+<td>三处同源演进</td>
+<td>版本化发布</td>
+</tr>
+</tbody>
+</table>
+<h3>10.2 【P1】数据飞轮埋点（对齐 AITL / MAPE，本版核心改良）</h3>
+<p>在对话与评审界面<strong>直接埋点采集 4 类信号</strong>，而非等离线批量标注：</p>
+<ol>
+<li><strong>成对偏好</strong>（两版评审哪个更好）。</li>
+<li><strong>采纳决策 + 理由</strong>（<code>keyword.verdict</code>，本版 <code>WorkflowNode</code> 已承载）。</li>
+<li><strong>知识相关度</strong>（资产/镜头是否命中知识库）。</li>
+<li><strong>缺失知识</strong>（评审发现知识库没有的规则）。</li>
+</ol>
+<blockquote>
+<p>对齐 Airbnb AITL：模型更新周期从&quot;月&quot;缩短到&quot;周&quot;；对齐 NVIDIA MAPE：监控→分析→规划→执行闭环。</p>
+</blockquote>
+<h3>10.3 受控边界（防漂移）</h3>
+<ol>
+<li>不做无监督实时自训；改&quot;定期采集→人工抽样把关→批量重训→回归评测&quot;。</li>
+<li>评审者也被评审：元评审 / Evals 回归集（含一致性维度，见 13 章）。</li>
+<li>评审不只打分：Critic 输出<strong>可落地修订指令</strong>。</li>
+<li>采纳闭环为数据：Accept/Reject/Unknown 三元是最干净标签源。</li>
+</ol>
+<h3>10.4 【P1】冷启动训练策略（本版新增）</h3>
+<p>早期真实采纳样本稀疏，采用 <strong>“合成+人工把关”</strong> 过渡（对齐 NVIDIA synthetic data）：</p>
+<ul>
+<li>先用合成分镜对（LLM 生成 + schema 约束）配合人工抽样修正，积累首批训练集。</li>
+<li>随埋点增加逐步切换到真实采纳样本，并做分布漂移监测。</li>
+</ul>
+<hr>
+<h2>11. 桌面端 UI/UX 设计</h2>
+<h3>11.1 定位</h3>
+<p>「类似 Codex 的桌面 agent 应用」：本地文件/资产、可后台重任务、可视化分镜画布、支持拖拽文件与图片上传。</p>
+<h3>11.2 整体布局（左中右三位一体 + 底部工具流）</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│ 顶栏：品牌·项目·模型供应商·账户                               │
+├────────┬──────────────────────────┬─────────────────────────┤
+│ 左W250 │ 中栏（弹性）             │ 右W392(可拖宽)           │
+│七步导航│ 对话窗口                 │ 影视工作台               │
+│①剧本  │ ·工具流式回显             │ ·分镜画布(时间轴)        │
+│②分镜  │ ·输入条[拖拽文件/图片]    │ ·镜头卡 / 资产卡/基准图    │
+│③提示词│ ·[P1]采纳按钮(✓/✗/?)      │ ┌─底部工具流Dock────────┐│
+│④编排  │ │                        │ │资产|镜头|编排|评审|配音││
+│⑤配音  │ │                        │ └──────────────────────┘│
+│⑥评审  │ │                        │                          │
+│会话集合│ │                        │                          │
+│·设置·沉淀                            │
+└───────┴──────────────────────────┴─────────────────────────┘
+  复盘沉淀中心入口（独立窗口）
+</code></pre>
+<blockquote>
+<p>【P1】中栏每条关键工具结果旁增加 <strong>Accept/Reject/Unknown</strong> 三态埋点按钮（默认 Unknown），这是数据飞轮的 UI 载体。</p>
+</blockquote>
+<h3>11.3 已交付设计稿</h3>
+<ol>
+<li>布局工程图（左中右线框稿 + 区域编号表）。</li>
+<li>复盘沉淀中心工程图（独立窗口，STEP01→02→03）。</li>
+<li>复盘沉淀中心交互原型（可操作高保真，含切换/沉淀/封装/Toast）。</li>
+</ol>
+<h3>11.4 视觉基调</h3>
+<p>深色石墨底 + 胶片琥珀 + 克制品牌紫，走&quot;专业影视/剪辑台&quot;观感。</p>
+<h3>11.5 待确认设计决策</h3>
+<ol>
+<li>深浅色基调；2. Dock 位置；3. 左栏是否可折叠。</li>
+</ol>
+<hr>
+<h2>12. 复盘沉淀功能</h2>
+<h3>12.1 功能定位</h3>
+<p><code>对话记录 → 知识卡片(多技能点) → 工作流知识库 → 一键封装 Skill → 会话复用</code></p>
+<h3>12.2 关键数据模型</h3>
+<p><strong>KnowledgeCard</strong></p>
+<pre><code class="language-jsonc">{ &quot;card_id&quot;:&quot;kc_09&quot;,&quot;skill_point&quot;:&quot;分镜脚本优化&quot;,&quot;origin&quot;:{&quot;sessions&quot;:[&quot;sess_0312&quot;]},
+  &quot;trigger&quot;:&quot;分镜需按情绪拆分&quot;,&quot;interface&quot;:{&quot;inputs&quot;:[&quot;剧本段落&quot;,&quot;分镜JSON&quot;]},
+  &quot;steps&quot;:[{&quot;order&quot;:1,&quot;action&quot;:&quot;解析剧本段落&quot;,&quot;tool&quot;:&quot;解析器&quot;}],
+  &quot;prompt_template&quot;:&quot;按 铺垫/冲突/释放 三段切分……&quot;,
+  &quot;best_practices&quot;:[&quot;情绪转折点拍慢&quot;],
+  &quot;metrics&quot;:{&quot;consistency_stability&quot;:&quot;3/3&quot;,&quot;reuse_count&quot;:0},&quot;state&quot;:&quot;drafted&quot; }
+</code></pre>
+<p><strong>SkillSpec</strong></p>
+<pre><code class="language-jsonc">{ &quot;skill&quot;:{&quot;name&quot;:&quot;storyboard-optimize&quot;,&quot;description&quot;:&quot;……&quot;,&quot;version&quot;:&quot;1.0.0&quot;,
+  &quot;source_cardId&quot;:&quot;kc_09&quot;,&quot;workflow&quot;:[{&quot;step&quot;:&quot;parse&quot;,&quot;agent&quot;:&quot;script_parser&quot;}],
+  &quot;entry_trigger&quot;:&quot;/workflow:storyboard-optimize&quot;,&quot;prompts&quot;:{&quot;template&quot;:&quot;…&quot;,&quot;variables&quot;:[&quot;分镜JSON&quot;]} } }
+</code></pre>
+<h3>12.3 四步管线</h3>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PHASE1 总结</td>
+<td>还原 WorkflowNode 序列 → LLM 归纳操作流程/工具链/产物</td>
+</tr>
+<tr>
+<td>PHASE2 提炼</td>
+<td>按技能点拆分为 n 张 KnowledgeCard（schema 约束，人工可编辑）</td>
+</tr>
+<tr>
+<td>PHASE3 沉淀</td>
+<td>向量入库 + SQLite + 样本归档</td>
+</tr>
+<tr>
+<td>PHASE4 封装</td>
+<td>回归达标或人工确认 → 编译 SkillSpec → skills/ 目录，会话内一键调用</td>
+</tr>
+</tbody>
+</table>
+<h3>12.4 库检索与淘汰</h3>
+<p>hybrid(BM25+向量)；复用入口 <code>/workflow:&lt;skill&gt;</code>；<code>reuse_count</code> 淘汰低效卡。</p>
+<h3>12.5 集成</h3>
+<p>Skill 复用 → 新一轮 WorkflowNode → 再复盘 → 能力增强引擎。</p>
+<hr>
+<h2>13. 一致性评估与质量回归（新增）</h2>
+<blockquote>
+<p>目标：为&quot;角色/场景/道具跨镜头一致性&quot;与&quot;电影级编排质量&quot;定义<strong>可度量、可回归</strong>的标准，融入 Evals，防止胃标与评审漂移。</p>
+</blockquote>
+<h3>13.1 一致性评估维度</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>说明</th>
+<th>度量方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>角色一致性</td>
+<td>同一角色外貌/服饰/形体重跨镜头稳定</td>
+<td>LLM 打分 + 抽样人审 + 图像 embedding 相似度(cos)</td>
+</tr>
+<tr>
+<td>场景一致性</td>
+<td>同一场景风格/光源/构图连续</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>道具一致性</td>
+<td>道具形态/位置一致</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>提示词可复现性</td>
+<td>同一提示词多次出图稳定</td>
+<td>IC50/相似度分布</td>
+</tr>
+</tbody>
+</table>
+<h3>13.2 质量回归集（Evals）</h3>
+<ul>
+<li>固定剧本→分镜→提示词→编排的黄金用例集。</li>
+<li>每次微调/封装前必须通过回归，未通过不得发 Skill。</li>
+<li>评分含：结构正确性、一致性得分、Prompt 可用性、编排专业度（含越轴/景别/色彩规则）。</li>
+</ul>
+<h3>13.3 落地</h3>
+<ul>
+<li>入库为 <code>consistency_set</code> 基准库（第 7 章 ER 已加）。</li>
+<li>与采用埋点并行：<code>accepted</code> 样本作为一致性高质样本优先采纳。</li>
+</ul>
+<hr>
+<h2>14. 行业对齐与落地路径（新增/终版）</h2>
+<blockquote>
+<p>本节固化《行业对齐验证评估报告》结论，作为落地红线。</p>
+</blockquote>
+<h3>14.1 关键验证结论</h3>
+<table>
+<thead>
+<tr>
+<th>验证点</th>
+<th>结论</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>桌面 agent 原装（对话+工具+文件）</td>
+<td>✅ 成立</td>
+<td>Claude Code、Cline(68.1k★,11M+)，Cline 已有桌面原生</td>
+</tr>
+<tr>
+<td>多智能体编排（协调器+专科子代理）</td>
+<td>✅ 业界主线</td>
+<td>Anthropic Managed Agents <code>multiagent</code>；orchestrator-worker +90.2%</td>
+</tr>
+<tr>
+<td>评审/批判子代理</td>
+<td>✅ 业界推荐</td>
+<td>Anthropic Planner-Generator-Evaluator；Cline Plan→Act</td>
+</tr>
+<tr>
+<td>自我改进/投喂训练</td>
+<td>✅ 必须按数据飞轮</td>
+<td>Airbnb AITL；NVIDIA MAPE；容智 L4 反思循环</td>
+</tr>
+<tr>
+<td>外部 API 可插拔 + MCP</td>
+<td>✅ 成立</td>
+<td>Cline 任意/OpenAI兼容 endpoint + MCP</td>
+</tr>
+<tr>
+<td>MCP 接入</td>
+<td>✅ 需补上</td>
+<td>Cline/Claude Code 标配</td>
+</tr>
+</tbody>
+</table>
+<h3>14.2 落地路径修正（P0–P2）</h3>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>落地动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>P0</strong></td>
+<td>编排复用成熟 Agent SDK 底座（不自建重型 loop），自研重心在&quot;分镜/资产/评审&quot;专科能力；原生接入 MCP</td>
+</tr>
+<tr>
+<td><strong>P1</strong></td>
+<td>对话界面采纳埋点(✓/✗/?)；一致性可度量并纳入 Evals；冷启动用合成分镜对+人工把关</td>
+</tr>
+<tr>
+<td><strong>P2</strong></td>
+<td>评审子代理用轻快模型降本；<code>WorkflowNode</code> 对齐结构化 artifact + 埋点 schema；补版权/供应商降级/缓存</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>15. 代码开发规范</h2>
+<h3>15.1 语言与命名</h3>
+<p>前端 TS 严格；后端 Rust(edition 2021)。TS <code>camelCase</code>/组件 <code>PascalCase</code>/常量 <code>UPPER_SNAKE</code>；Rust <code>PascalCase</code>/<code>snake_case</code>/<code>SCREAMING_SNAKE</code>。</p>
+<h3>15.2 目录</h3>
+<p>前端 <code>src/{components,features,services,state,assets}</code>；Rust <code>src-tauri/{commands,agents,repo,providers,sandbox,errors}</code>。</p>
+<h3>15.3 注释 / Git / 安全</h3>
+<ul>
+<li>注释解释&quot;为什么&quot;；API 用 JSDoc/Rustdoc。</li>
+<li>Git：<code>feat/*</code>、<code>fix/*</code>、<code>docs/*</code>；conventional commits（<code>feat:</code>/<code>fix:</code>/<code>docs:</code>/<code>refactor:</code>）。</li>
+<li>Rust 处理文件/网络/凭证；凭证仅 OS Keychain；外部输入 schema 校验后再进 Agent 上下文。</li>
+<li>【P1】所有 tool-call 落 <code>WorkflowNode</code>（含 <code>verdict</code>），为复盘/训练埋点。</li>
+</ul>
+<h3>15.4 测试</h3>
+<ul>
+<li>Schema 单测；Agent mock 输出断言结构/收敛；关键链路设 Evals 回归（含一致性维度，见 13 章），未通过不得封装 Skill。</li>
+</ul>
+<hr>
+<h2>16. 推荐项目结构（终版）</h2>
+<pre><code>film-director-agent/
+├─ src-tauri/                # Rust 后端
+│  ├─ commands/ agents/ repo/ providers/ sandbox/ errors/
+├─ src/                      # React+TS(Vite)
+│  ├─ features/ chat/ dashboard/ review/ reflect/ settings/
+├─ agent-base/               # 【P0】编排底座(复用 SDK)的声明：roster · prompts · tools
+├─ skills/                   # Skill 资产库(编译产物)
+├─ schemas/                  # 剧本/分镜/资产/知识卡/SkillSpec/annotation schema
+├─ evals/                    # 回归集 + consistency_set(一致性基准)
+├─ mcp/                      # 【P0】MCP 服务器接入配置(资产/音效等)
+├─ design/                   # 本文档 + 工程图(见附录A)
+└─ README.md
+</code></pre>
+<hr>
+<h2>17. 开发里程碑（终版）</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>内容</th>
+<th>关键交付</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0 基础骨架</td>
+<td>Tauri2+React、接入成熟 Agent SDK 底座、剧本 Schema、LLM 接入、MCP 骨架</td>
+<td>小说→剧本走通，编排走 SDK</td>
+</tr>
+<tr>
+<td>P1 核心流水线</td>
+<td>剧本→分镜→提示词三 Agent（基于 SDK roster）+ 资产库</td>
+<td>一集→分镜+提示词可出图</td>
+</tr>
+<tr>
+<td>P2 编排+评审</td>
+<td>编排 Agent + Critic Agent + 采纳埋点 + 一致性评估</td>
+<td>基准图回传→再编排闭环 + 数据飞轮</td>
+</tr>
+<tr>
+<td>P3 训练闭环</td>
+<td>RAG 记忆 + 定期 LoRA/DPO + Evals(含一致性) + 冷启动合成样本</td>
+<td>系统随投喂能力可见提升</td>
+</tr>
+</tbody>
+</table>
+<p>复盘沉淀排序：M1 数据层 → M2 提炼管线(风险集中，优先验证) → M3 封装复用 → M4 闭环增强。</p>
+<hr>
+<h2>18. 风险与对策（终版）</h2>
+<h3>18.1 业务/合规</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>版权（小说改编/AI造图）</td>
+<td>素材授权；生图外包合规 API；【P2】用户协议/训练数据授权条款</td>
+</tr>
+<tr>
+<td>一致性漂移</td>
+<td>资产库先行 + 参考图条件控制 + 【P1】一致性评估</td>
+</tr>
+<tr>
+<td>长篇上下文</td>
+<td>三级分解 + RAG 分段</td>
+</tr>
+<tr>
+<td>冷启动样本稀疏</td>
+<td>【P1】合并成+人工把关</td>
+</tr>
+</tbody>
+</table>
+<h3>18.2 工程</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自建编排器成本</td>
+<td>【P0】复用 SDK 底座，集中精力于专科能力</td>
+</tr>
+<tr>
+<td>供应商 API 变化/限流</td>
+<td>适配层 + 降级/缓存【P2】</td>
+</tr>
+<tr>
+<td>图像工作区 UI 复杂</td>
+<td>先列表/卡，再时间轴</td>
+</tr>
+</tbody>
+</table>
+<h3>18.3 训练/复盘沉淀</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>对策</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>评审自我漂移</td>
+<td>元评审 + Evals(含一致性)</td>
+</tr>
+<tr>
+<td>Skill 自动封装误用</td>
+<td>回归达标或人工确认 + 版本 diff</td>
+</tr>
+<tr>
+<td>知识库膨胀</td>
+<td>TTL/LRU 淘汰 + 向量去重归并</td>
+</tr>
+<tr>
+<td>训练样本污染</td>
+<td>仅归档 accepted，人工修订优先</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>附录 A · 设计图稿索引</h2>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>复盘沉淀中心-交互原型.html</td>
+<td>交互原型</td>
+<td>可操作高保真（切换/沉淀/封装/Toast）</td>
+</tr>
+<tr>
+<td>影视编导桌面应用-布局工程图.html</td>
+<td>工程图</td>
+<td>左中右三位一体线框稿</td>
+</tr>
+<tr>
+<td>影视编导桌面智能体-复盘沉淀中心.html</td>
+<td>工程图</td>
+<td>独立窗口线框稿(三步)</td>
+</tr>
+<tr>
+<td>影视编导策划智能体-综合技术文档.md/.html</td>
+<td>V1.0</td>
+<td>上一版基线（历史）</td>
+</tr>
+</tbody>
+</table>
+<h2>附录 B · 与 V1.0 的变更对照</h2>
+<table>
+<thead>
+<tr>
+<th>变更点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编排底座【P0】</td>
+<td>复用成熟 Suite 底座，不自建 loop</td>
+</tr>
+<tr>
+<td>MCP 接入【P0】</td>
+<td>新增第 9.3 节与项目结构 mcp/</td>
+</tr>
+<tr>
+<td>采纳埋点【P1】</td>
+<td>WorkflowNode+verdict；UI 三态按钮；数据飞轮</td>
+</tr>
+<tr>
+<td>一致线评估【P1】</td>
+<td>新增第 13 章、ER 增 consistency_set、16 项目结构 evals</td>
+</tr>
+<tr>
+<td>冷启动【P1】</td>
+<td>新增 10.4 合成样本+人工把关</td>
+</tr>
+<tr>
+<td>评审低成本【P2】</td>
+<td>8.1 Agent 模型层级</td>
+</tr>
+<tr>
+<td>行业对齐</td>
+<td>新增第 14 章与改良清单</td>
+</tr>
+<tr>
+<td>版本号</td>
+<td>V1.0 → V2.0 终版</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p>（正文完）</p>
+<blockquote>
+<p>预览与图件：以 <code>design/</code> 下 HTML 工程图为准；本 markdown 由脚本渲染为同目录 HTML（见附录 A）。</p>
+</blockquote>
+
+  </main>
+</div>
+<script>
+// build toc
+const heads=document.querySelectorAll('.doc h1');
+const tocBody=document.getElementById('tocBody');
+heads.forEach(h=>{
+  const id=h.textContent.trim().toLowerCase().replace(/[^a-z0-9一-龥]+/g,'-');
+  h.id=id;
+  const a=document.createElement('a');
+  a.href='#'+id; a.textContent=h.textContent; a.className='h2';
+  tocBody.appendChild(a);
+});
+// scroll progress
+const pb=document.getElementById('pb');
+addEventListener('scroll',()=>{const d=document.documentElement;const max=(d.scrollHeight-d.clientHeight)||1;pb.style.width=(d.scrollTop/max*100)+'%';});
+</script>
+<script src="vendor/mermaid.min.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  if (!window.mermaid) { return; }
+  mermaid.initialize({ startOnLoad:false, theme:'dark', securityLevel:'loose',
+    themeVariables:{ primaryColor:'#1d242f', primaryTextColor:'#e6edf3', primaryBorderColor:'#8b5cf6',
+      lineColor:'#4a5b74', clusterBkg:'#161b23', clusterBorder:'#2a3340', edgeLabelBackground:'#161b23' } });
+  document.querySelectorAll('.mermaid').forEach(function(el){
+    try { mermaid.run({ nodes:[el] }); }
+    catch(e){ el.innerHTML='<p style="color:#f87171">⚠️ Mermaid 渲染失败: '+String(e&&e.message||e)+'</p>'; }
+  });
+});
+</script>
+</body>
+</html>

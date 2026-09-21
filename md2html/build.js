@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const MarkdownIt = require('markdown-it');
 
-const src = '/workspace/design/影视编导策划智能体-综合技术文档.md';
-const out = '/workspace/design/影视编导策划智能体-综合技术文档.html';
+const src = '/workspace/design/影视编导策划智能体-总汇终版技术文档.md';
+const out = '/workspace/design/影视编导策划智能体-总汇终版技术文档.html';
 
 const md = new MarkdownIt({ html: true, linkify: true, typographer: true });
 
@@ -26,7 +26,7 @@ const html = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>影视编导策划智能体 · 综合技术文档</title>
+<title>影视编导策划智能体 · 总汇终版技术文档</title>
 <style>
 :root{
   --bg:#0e1116; --panel:#161b23; --panel2:#1d242f;
@@ -81,12 +81,12 @@ a{color:var(--brand2)}
 <body>
 <div class="progress" id="pb"></div>
 <div class="layout">
-  <nav class="toc" id="toc"><div class="toc-brand">影视编导智能体 <span>· 技术文档</span></div><div id="tocBody"></div></nav>
+  <nav class="toc" id="toc"><div class="toc-brand">影视编导智能体 <span>· 总汇终版</span></div><div id="tocBody"></div></nav>
   <main class="doc">
     <div class="hero">
-      <span class="tag">综合技术基线 · v1.0</span>
-      <h1>影视编导策划智能体 · 综合技术文档</h1>
-      <div class="sub">小说→剧本→分镜→提示词→电影级分镜编排 · 桌面应用智能体 · 复盘沉淀与训练闭环</div>
+      <span class="tag">总汇终版 · v2.0</span>
+      <h1>影视编导策划智能体 · 总汇终版技术文档</h1>
+      <div class="sub">小说→剧本→分镜→提示词→电影级分镜编排 · 桌面应用智能体 · 复盘沉淀与训练闭环 · 行业对齐验证</div>
     </div>
     ${body}
   </main>
