@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>影视编导桌面智能体 · 复盘沉淀中心（独立窗口）工程图</title>
+<style>
+  :root{
+    --bg:#F4F3F0; --paper:#FFFFFF; --ink:#1C1B2E; --ink-2:#6B6888; --line:#C9C6BD;
+    --line-strong:#A6A3B8; --brand:#3C2ECA; --brand-2:#241F93; --accent:#C77B2E;
+    --ok:#2F9E6E; --grid:rgba(28,27,46,.06); --mono:"SFMono-Regular","Roboto Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);padding:28px;line-height:1.5}
+  h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+  .sub{color:var(--ink-2);font-size:12.5px;margin-top:4px}
+  .sheet{max-width:1280px;margin:0 auto}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 22px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0 18px;font-size:12px}
+  .legend b{color:var(--brand-2)}
+  .tag{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--line-strong)}
+  .tagline{font-family:var(--mono);color:var(--ink-2);font-size:11.5px}
+  .app{border:1.5px solid var(--ink);border-radius:10px;overflow:hidden;background:var(--paper);box-shadow:0 18px 40px rgba(28,27,46,.10);position:relative;display:flex;flex-direction:column}
+  .demo{font-size:11px;color:var(--brand-2);background:#EDEBFF;border:1px solid var(--brand);border-radius:20px;padding:3px 12px;display:inline-block;margin-right:8px}
+
+  /* topbar */
+  .topbar{display:flex;align-items:center;gap:12px;padding:0 16px;height:54px;border-bottom:1.5px solid var(--ink);background:#16151F;color:#fff}
+  .mm-brand{font-weight:700;letter-spacing:.4px;font-size:13px}
+  .tb{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:6px;color:#E8E6F5;padding:5px 12px;font-size:12px}
+  .tb.on{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .button{border:1px solid var(--line);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--ink-2);background:var(--paper)}
+  .button.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+  /* 3-step flow */
+  .flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-bottom:1.5px solid var(--ink)}
+  .fstep{border-right:1.5px solid var(--ink);padding:14px 18px;position:relative}
+  .fstep:last-child{border-right:none}
+  .fnum{font-family:var(--mono);color:var(--accent);font-weight:700;font-size:12px}
+  .ftitle{font-weight:700;font-size:14px;margin-top:2px}
+  .fdesc{font-size:11.5px;color:var(--ink-2);margin-top:6px;line-height:1.55}
+  .fchip{display:inline-flex;align-items:center;gap:5px;background:#FBFAF7;border:1px solid var(--line);border-radius:20px;padding:3px 9px;font-size:11px;margin-top:8px;margin-right:6px;color:var(--ink)}
+  .fchip.hot{background:#EDEBFF;border-color:var(--brand);color:var(--brand-2);font-weight:600}
+
+  /* body: left list / right detail */
+  .body{display:grid;grid-template-columns:320px 1fr;min-height:520px}
+  .left{display:flex;flex-direction:column;border-right:1.5px solid var(--line);background:#FBFAF7}
+  .section-title{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--ink-2);padding:12px 14px 6px;text-transform:uppercase}
+  .kitem{display:flex;flex-direction:column;gap:3px;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+  .kitem.on{background:var(--brand-soft,#EDEBFF);border-left:3px solid var(--brand)}
+  .kname{font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px}
+  .kmeta{font-size:11px;color:var(--ink-2)}
+  .kbadge{font-size:10px;border-radius:20px;padding:1px 7px;background:#EAF5EF;color:var(--ok);font-weight:600}
+  .kbadge.rev{background:#F5EAE7;color:#B04826}
+  .divider{height:1px;background:var(--line);margin:8px 0}
+
+  .right{display:flex;flex-direction:column;padding:0}
+  .card-preview{padding:18px;flex:1;display:flex;flex-direction:column;gap:14px}
+  .cardhead{display:flex;align-items:center;gap:10px}
+  .cardhead .t{font-weight:700;font-size:15px}
+  .chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:20px;padding:2px 9px;font-size:11px;color:var(--ink-2)}
+  .kvrow{display:flex;gap:8px;flex-wrap:wrap;font-size:12px}
+  .kv{display:flex;align-items:center;gap:6px;background:#FBFAF7;border:1px solid var(--line);border-radius:7px;padding:8px 11px}
+  .kv .lb{color:var(--ink-2);font-size:11px}
+  .kv .vl{font-weight:600}
+  .steprow{display:flex;gap:8px;align-items:center;font-size:12px}
+  .stepno{width:22px;height:22px;border-radius:50%;background:#EDEBFF;color:var(--brand-2);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:11px;flex:none}
+  .occ{font-size:11px;color:var(--ink-2)}
+  .block{border:1px solid var(--line);border-radius:8px;padding:10px 13px;font-size:12px}
+  .block .bt{font-weight:600;font-size:11px;color:var(--brand-2);margin-bottom:6px;letter-spacing:.5px}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .prm{font-family:var(--mono);font-size:11.5px;color:var(--ink);background:#F6F5F2;border:1px solid var(--grid);border-radius:6px;padding:7px 9px}
+  .alert{border:1px dashed var(--accent);border-radius:8px;padding:9px 12px;font-size:11.5px;color:var(--accent);background:#FFFBF3}
+  .done{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .ditem{border:1px solid var(--ok);border-radius:8px;padding:10px;font-size:11.5px;color:var(--ok);background:#F3FBF7;display:flex;flex-direction:column;gap:4px}
+  .ditem b{color:var(--ink)}
+  .ditem.rev{border-color:#B04826;background:#FBF4F2;color:#B04826}
+
+  .footer{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);background:#FAF9F6}
+  .footer .note{font-size:11px;color:var(--ink-2)}
+
+  .reg{width:100%;border-collapse:collapse;margin-top:24px;font-size:12px;background:var(--paper);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .reg th{background:#EDEBFF;color:var(--brand-2);text-align:left;padding:10px 14px;font-weight:700;border-bottom:1px solid var(--line)}
+  .reg td{padding:9px 14px;border-bottom:1px solid var(--grid);vertical-align:top}
+  .reg tr:last-child td{border-bottom:none}
+  .reg td.id{font-family:var(--mono);color:var(--accent);font-weight:700;width:56px}
+  .note-final{font-size:11.5px;color:var(--ink-2);margin-top:12px;line-height:1.6}
+  .note-final code{font-family:var(--mono);font-size:11px;color:var(--brand-2);background:#EDEBFF;padding:1px 5px;border-radius:4px}
+  .back{display:inline-block;font-size:12.5px;color:var(--brand-2);text-decoration:none;margin-bottom:14px}
+  .back:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="影视编导桌面应用-布局工程图.html">← 返回主界面工程图（左中右三位一体）</a>
+  <h1>影视编导桌面智能体 · 复盘沉淀中心 <span class="demo">独立窗口 · 页面 02/02</span></h1>
+  <div class="sub">一键总结对话 → 提炼技能点知识卡片 → 沉淀知识库 → 一键封装为可复用 Skill</div>
+
+  <div class="legend">
+    <span class="tag"><span class="sw" style="background:#EDEBFF;border-color:var(--brand)"></span><b>选中态 / 高亮</b></span>
+    <span class="tag"><span class="sw" style="background:#EAF5EF;border-color:var(--ok)"></span><b>已沉淀 / 已外封装</b></span>
+    <span class="tag"><span class="sw" style="border-color:var(--accent)"></span><b>可操作提示 / 下一步</b></span>
+    <span class="tagline">单位：px | 独立窗口可缩放、可停靠主界面一侧</span>
+  </div>
+
+  <div class="app">
+    <!-- window topbar -->
+    <div class="topbar">
+      <div class="mm-brand">♻ 复盘沉淀中心 <span style="opacity:.55;font-weight:400">REFLECT &amp; CAPTURE</span></div>
+      <span class="tb on">对话记录导入</span>
+      <span class="tb">技能点知识库</span>
+      <span class="tb">Skill 资产库</span>
+      <span class="button primary" style="margin-left:auto" architect="margin-left:auto">＋ 新建复盘</span>
+    </div>
+
+    <!-- 3-step pipeline -->
+    <div class="flow">
+      <div class="fstep">
+        <div class="fnum">STEP 01 · 总结</div>
+        <div class="ftitle">一键总结对话记录</div>
+        <div class="fdesc">拉取当前/选定会话，AI 自动归纳操作流程、使用的工作流工具、产出的产物清单。</div>
+        <div><span class="fchip hot">自动识别工具调用</span><span class="fchip">提取产物引用</span><span class="fchip">时间线还原</span></div>
+      </div>
+      <div class="fstep">
+        <div class="fnum">STEP 02 · 提炼</div>
+        <div class="ftitle">生成技能点知识卡片</div>
+        <div class="fdesc">按技能点拆分为多张结构化知识卡片，每张含流程、输入输出、关键提示词、最佳实践。</div>
+        <div><span class="fchip hot">多技能点拆分</span><span class="fchip">可人工编辑</span></div>
+      </div>
+      <div class="fstep">
+        <div class="fnum">STEP 03 · 沉淀 &amp; 封装</div>
+        <div class="ftitle">沉淀知识库 · 一键封装 Skill</div>
+        <div class="fdesc">卡片写入工作流知识库；选定有效卡片一键封装为 Skill 格式（名称/描述/步骤/工作流）。</div>
+        <div><span class="fchip">写入知识库</span><span class="fchip hot">封装为 Skill</span></div>
+      </div>
+    </div>
+
+    <!-- body: left skill list / right preview -->
+    <div class="body">
+      <div class="left">
+        <div class="section-title">技能点知识卡片 · 来源：本周对话归档</div>
+        <div class="kitem on">
+          <span class="kname">分镜脚本优化 <span class="kbadge">已沉淀</span></span>
+          <span class="kmeta">流程 6 步 · 产物 3 · 改动 2</span>
+        </div>
+        <div class="kitem">
+          <span class="kname">运镜·越轴修正 <span class="kbadge">已沉淀</span></span>
+          <span class="kmeta">流程 4 步 · 产物 1 · 最佳实践 1</span>
+        </div>
+        <div class="kitem">
+          <span class="kname">正反打 · 过肩镜头 <span class="kbadge">待人工复核</span></span>
+          <span class="kmeta">流程 5 步 · 产物 2</span>
+        </div>
+        <div class="kitem">
+          <span class="kname">机位质感·调色 <span class="kbadge rev">待定版</span></span>
+          <span class="kmeta">流程 3 步 · 提示词模板 1</span>
+        </div>
+        <div class="divider"></div>
+        <div style="padding:0 14px 14px">
+          <div class="vv" style="font-size:11.5px;color:var(--ink-2)">▸ 汇总：本轮沉淀卡片 <b style="color:var(--brand-2)">4</b> 张 · 已封装 Skill <b style="color:var(--ok)">1</b> 个 · 待人工复核 <b style="color:#B04826">1</b></div>
+        </div>
+      </div>
+
+      <div class="right">
+        <!-- current card preview -->
+        <div class="card-preview">
+          <div class="cardhead">
+            <span class="t">技能点卡 · 分镜脚本优化</span>
+            <span class="chip">流程模板</span><span class="chip">v3</span><span class="chip">来源：会话 #0312</span>
+            <span class="button primary" style="margin-left:auto">沉淀到知识库</span>
+            <span class="button" style="background:var(--brand);color:#fff;border-color:var(--brand)">封装为 Skill</span>
+          </div>
+
+          <div class="kvrow">
+            <div class="kv"><span class="lb">触发场景</span><span class="vl">分镜需按情绪拆分</span></div>
+            <div class="kv"><span class="lb">输入</span><span class="vl">剧本段落 / 分镜JSON</span></div>
+            <div class="kv"><span class="lb">输出</span><span class="vl">优化后分镜 · 提示词</span></div>
+            <div class="kv"><span class="lb">稳定性</span><span class="vl">通过 3/3 回归</span></div>
+          </div>
+
+          <div class="block">
+            <div class="bt">OPERATION · 关键操作流程</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="steprow"><span class="stepno">1</span><div>解析剧本段落，抽取情绪与叙事节点 <span class="occ">→ 工具：解析器</span></div></div>
+              <div class="steprow"><span class="stepno">2</span><div>按三情拆分镜头（铺垫/冲突/释放） <span class="occ">→ 工具：分镜Agent</span></div></div>
+              <div class="steprow"><span class="stepno">3</span><div>为每镜头附加景别·运镜·构图指令 <span class="occ">→ 工具：编排Agent</span></div></div>
+              <div class="steprow"><span class="stepno">4</span><div>过基准图校验一致性 <span class="occ">→ 工具：图库/对比</span></div></div>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="bt">PROMPT · 关键提示词模板</div>
+            <div class="prm">按"铺垫/冲突/释放"三段切分本镜序列；每镜头输出 {景别,运镜,构图,叙事} 且过基准图一致性校验。</div>
+          </div>
+
+          <div class="block">
+            <div class="bt">BEST PRACTICE · 最佳实践 / 规律</div>
+            <div class="tags">
+              <span class="tag"><span class="sw" style="border-color:var(--line-strong)"></span>情绪转折点拍慢</span>
+              <span class="tag"><span class="sw" style="border-color:var(--line-strong)"></span>对白前给反应镜头</span>
+              <span class="tag"><span class="sw" style="border-color:var(--line-strong)"></span>越轴用低机位补偿</span>
+            </div>
+          </div>
+
+          <div class="alert">下一步建议：该卡片已通过 3/3 回归，可封装为 Skill「分镜脚本优化」，供其他会话一键复用。</div>
+        </div>
+
+        <!-- packaging summary -->
+        <div style="padding:16px 18px;background:var(--paper)">
+          <div class="bt" style="font-weight:700;font-size:12px;color:var(--brand-2);margin-bottom:10px">SKILL 封装结果</div>
+          <div class="done">
+            <div class="ditem"><b>分镜脚本优化</b>已写入知识库 · Skill ✓</div>
+            <div class="ditem">运镜·越轴修正 已写入知识库 · Skill ✓</div>
+            <div class="ditem">正反打·过肩镜头 待人工复核</div>
+            <div class="ditem rev">机位质感·调色 待定版</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="button">批量沉淀</span>
+      <span class="button primary">一键封装所选 → Skill 库</span>
+      <span class="note">封装输出：SKILL 格式（name / 描述 / 步骤 / 工作流 / 复用入口），可在对话中一键调用。</span>
+    </div>
+  </div>
+
+  <!-- register -->
+  <table class="reg">
+    <tr><th>编号</th><th>区域</th><th>功能说明</th></tr>
+    <tr><td class="id">D-01</td><td>窗口顶栏</td><td>复盘沉淀中心，独立窗口可缩放/停靠；选项卡：对话导入 / 技能点知识库 / Skill 资产库</td></tr>
+    <tr><td class="id">D-02</td><td>三步流程条</td><td>总结 → 提炼 → 沉淀&amp;封装，当前阶段高亮，可随时人工介入编辑</td></tr>
+    <tr><td class="id">D-03</td><td>左栏·技能点卡片列表</td><td>知识卡片索引，含状态徽标（已沉淀/待复核/待定版），点击切换右侧预览</td></tr>
+    <tr><td class="id">D-04</td><td>右栏·卡片预览</td><td>操作流程、提示词模板、最佳实践、相关性指标；「沉淀到知识库」「封装为 Skill」操作</td></tr>
+    <tr><td class="id">D-05</td><td>封装汇总</td><td>Skill 封装结果一览 + 一键封装所选（多选批量）到 Skill 资产库</td></tr>
+  </table>
+
+  <div class="note-final">
+    <b>入口与联动：</b>主界面左栏底部「⚙ 设置 · 供应商 · 训练」与中栏对话头部均可从「对话记录 → 复盘沉淀」唤起此独立窗口。对话记录、产物、工具调用链会自动带入，供一键总结。
+    沉淀闭环：<code>对话记录 → 知识卡片 → 工作流知识库 → 一键封装 Skill → 会话复用</code>，与主界面「评审 · 迭代」共同组成能力自增强闭环。
+  </div>
+</div>
+</body>
+</html>
